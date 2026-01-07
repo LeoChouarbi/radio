@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RadioÉcole | Cours Radiofréquence pour Établissements</title>
+<!-- Fonts & libs -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<!-- Styles -->
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* Ajout de styles pour la nouvelle section Démonstrations */
+.demo-section {
+  background: linear-gradient(135deg, #0a192f 0%, #112240 100%);
+  padding: 100px 0;
+}
+
+.demo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 50px;
+}
+
+.demo-card {
+  background: rgba(16, 32, 64, 0.6);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(106, 90, 249, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.demo-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 243, 255, 0.15);
+}
+
+.demo-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+  color: #00f3ff;
+}
+
+.demo-image {
+  margin-top: 25px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.demo-image img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.demo-card:hover .demo-image img {
+  transform: scale(1.05);
+}
+
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(10, 25, 47, 0.9);
+  color: white;
+  padding: 12px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Styles pour uniformiser les images de la section Méthodologie */
+.method-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-top: 15px;
+  box-shadow: 0 4px 15px rgba(0, 243, 255, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.method-card:hover img {
+  transform: scale(1.03);
+}
+</style>
+</head>
+<body>
+<!-- Preloader -->
+<div class="preloader" id="preloader">
+<div class="loader-container">
+<div class="loader">
+<div class="loader-ring"></div>
+<div class="loader-ring"></div>
+<div class="loader-ring"></div>
+</div>
+<div class="loader-text">CHARGEMENT</div>
+</div>
+</div>
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="cursor-follower"></div>
+<!-- Header -->
+<header id="header">
+<a href="#hero" class="logo">RadioÉcole</a>
+<nav>
+<a href="#hero" class="active">Accueil</a>
+<a href="#modules">Programme</a>
+<a href="#demo">Démonstrations</a>
+<a href="#methodologie">Méthodologie</a>
+<a href="#format">Format</a>
+<a href="#contact">Contact</a>
+</nav>
+</header>
+<!-- Hero -->
+<section id="hero" class="hero">
+<div class="hero-bg" id="heroCanvas"></div>
+<div class="container">
+<div class="hero-content">
+<h1>Initiation à la Radiofréquence</h1>
+<div class="hero-subtitle">Découvrez le monde invisible des ondes</div>
+<p>Des ondes radio aux communications 5G, explorez le spectre électromagnétique qui relie notre monde.</p>
+<p>Formation développée pour des étudiants BAC+4 à l'ESIEA, école d'ingénieurs.</p>
+<div class="hero-btns">
+<a href="#modules" class="btn btn-primary">
+<i class="fas fa-rocket"></i> Découvrir le programme
+</a>
+<a href="#contact" class="btn btn-secondary">
+<i class="fas fa-calendar-check"></i> Planifier un atelier
+</a>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Section Démonstrations interactives -->
+<section id="demo" class="demo-section">
+<div class="container">
+<h2 class="section-title centered"><span>Démonstrations</span> Interactives</h2>
+<p class="section-subtitle centered">Des concepts complexes rendus accessibles grâce à des outils pédagogiques innovants</p>
+<div class="demo-grid">
+<div class="demo-card">
+<div class="demo-icon">🖥️</div>
+<h3>Simulateur d'Ondes en Temps Réel</h3>
+<p>Visualisez la propagation des ondes à travers différents milieux avec notre simulateur exclusif.</p>
+<div class="demo-image">
+<img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600" alt="Simulateur d'ondes radio montrant la propagation à travers des matériaux">
+<div class="image-overlay">
+<span>Voir la démo interactive</span>
+</div>
+</div>
+</div>
+<div class="demo-card">
+<div class="demo-icon">🤝</div>
+<h3>Ateliers Interactifs</h3>
+<p>Participez à des sessions pratiques avec des experts pour des échanges concrets et personnalisés.</p>
+<div class="demo-image">
+<img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600" alt="Atelier interactif avec étudiants et professeur sur la radiofréquence">
+<div class="image-overlay">
+<span>Disponible lors des ateliers</span>
+</div>
+</div>
+</div>
+<div class="demo-card">
+<div class="demo-icon">🌐</div>
+<h3>Interdisciplinarité</h3>
+<p>Découvrez les applications concrètes en médecine (IRM), astronomie (télescopes radio), IoT et communications spatiales.</p>
+<div class="demo-image">
+<img src="https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?auto=format&fit=crop&w=600" alt="Applications interdisciplinaires des ondes radio dans différents domaines">
+<div class="image-overlay">
+<span>Cas pratiques inclus</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Modules détaillés -->
+<section id="modules">
+<div class="container">
+<h2 class="section-title">Programme <span>Détailé</span></h2>
+<p class="section-subtitle">9 modules progressifs pour maîtriser les fondamentaux</p>
+<div class="modules-grid">
+<div class="module-card" data-index="0">
+<div class="module-icon"><i class="fas fa-book-open"></i></div>
+<h3>Introduction & Histoire</h3>
+<p>De Maxwell à Tesla : les bases théoriques et expérimentales qui ont permis les communications sans fil. Évolution historique des technologies radio.</p>
+</div>
+<div class="module-card" data-index="1">
+<div class="module-icon"><i class="fas fa-ruler-combined"></i></div>
+<h3>Bases Physiques</h3>
+<p>Propagation des ondes : réflexion, diffraction, absorption. Relation fréquence/longueur d'onde/énergie. Expériences pratiques de visualisation.</p>
+</div>
+<div class="module-card" data-index="2">
+<div class="module-icon"><i class="fas fa-project-diagram"></i></div>
+<h3>Applications Concrètes</h3>
+<p>Étude des systèmes réels : réseaux de secours (pompiers), télécommunications (4G/5G), IoT, applications spatiales, et usages industriels.</p>
+</div>
+<div class="module-card" data-index="3">
+<div class="module-icon"><i class="fas fa-sitemap"></i></div>
+<h3>Chaîne Radio Complète</h3>
+<p>Anatomie d'un système radio : oscillateurs, modulateurs, amplificateurs, filtres, antennes. Problèmes pratiques : bruit, interférences, adaptation d'impédance.</p>
+</div>
+<div class="module-card" data-index="4">
+<div class="module-icon"><i class="fas fa-chart-line"></i></div>
+<h3>Analyse des Signaux</h3>
+<p>Concepts de Fourier vulgarisés. Visualisation spectrale avec des outils SDR (Software Defined Radio). Échantillonnage et théorème de Nyquist.</p>
+</div>
+<div class="module-card" data-index="5">
+<div class="module-icon"><i class="fas fa-wave-square"></i></div>
+<h3>Modulation & Codage</h3>
+<p>Comment l'information est portée par les ondes : AM, FM, ASK, PSK, QAM, FSK. Observations de constellations IQ et liens avec les télécoms modernes.</p>
+</div>
+<div class="module-card" data-index="6">
+<div class="module-icon"><i class="fas fa-volume-mute"></i></div>
+<h3>Bruit & Filtres</h3>
+<p>Comprendre le bruit gaussien et le rapport signal/bruit (SNR). Importance du filtrage. Démonstrations visuelles de signaux filtrés.</p>
+</div>
+<div class="module-card" data-index="7">
+<div class="module-icon"><i class="fas fa-signal"></i></div>
+<h3>Antennes</h3>
+<p>Fonctionnement, types (dipôles, Yagi, paraboliques), directivité. Adaptation d'impédance. Démonstrations pratiques selon matériel disponible.</p>
+</div>
+<div class="module-card" data-index="8">
+<div class="module-icon"><i class="fas fa-rocket"></i></div>
+<h3>Perspectives Futures</h3>
+<p>5G, bandes millimétriques, intelligence artificielle dans les communications, impact environnemental et sociétal des radiofréquences.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Méthodologie -->
+<section id="methodologie">
+<div class="container">
+<h2 class="section-title"><span>Méthodologie</span> Innovante</h2>
+<p class="section-subtitle">Rendre la physique concrète et passionnante</p>
+<div class="methodology-grid">
+<div class="method-card">
+<div class="method-icon"><i class="fas fa-tv"></i></div>
+<h3>Supports Visuels Professionnels</h3>
+<p>Diapositives inspirées des cours d'ingénieurs, animations 3D des phénomènes ondulatoires.</p>
+<img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Salle de cours universitaire avec enseignant devant tableau technique">
+</div>
+<div class="method-card">
+<div class="method-icon"><i class="fas fa-microchip"></i></div>
+<h3>Démos en Temps Réel</h3>
+<p>Analyse spectrale live avec des dongles SDR (RTL-SDR)</p>
+<img src="https://m.media-amazon.com/images/I/71-Trg2OpBL._AC_UF1000  ,1000_QL80_.jpg" alt="Dongle SDR pour analyse spectrale" style="width:100%; border-radius:12px; margin-top:15px; box-shadow:0 4px 15px rgba(0,243,255,0.2);"></div>
+<div class="method-card">
+<div class="method-icon"><i class="fas fa-comments"></i></div>
+<h3>Discussions Interactives</h3>
+<p>Questions ouvertes : "Pourquoi les ondes ne traversent pas l'eau ?", "Comment fonctionne le GPS de votre téléphone ?"</p>
+<img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Échanges interactifs entre enseignant et étudiants en séminaire">
+</div>
+<div class="method-card">
+<div class="method-icon"><i class="fas fa-project-diagram"></i></div>
+<h3>Interdisciplinarité</h3>
+<p>Liaison avec les programmes de physique, mathématiques, histoire des sciences et technologie.</p>
+<img src="https://images.unsplash.com/photo-1632571401005-458e9d244591?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Tableau rempli d'équations mathématiques et schémas d'ondes">
+</div>
+</div>
+</div>
+</section>
+
+<!-- Format intervention -->
+<section id="format" class="perspectives-bg">
+<div class="container">
+<h2 class="section-title"><span>Format</span> de l'Intervention</h2>
+<p class="section-subtitle">Adaptable à vos besoins pédagogiques</p>
+<div class="format-container">
+<div class="format-card">
+<div class="format-icon"><i class="fas fa-clock"></i></div>
+<h3>Durée Modulable</h3>
+<p>Choisissez le format qui convient à votre emploi du temps :</p>
+<div class="duration-tags">
+<span class="duration-tag">1h30 • Découverte</span>
+<span class="duration-tag">1 journée • Initiation complète</span>
+<span class="duration-tag">2-3 jours • Projet approfondi</span>
+</div>
+</div>
+<div class="format-card">
+<div class="format-icon"><i class="fas fa-box-open"></i></div>
+<h3>Matériel Fourni</h3>
+<p>Je fournis tous les supports nécessaires :</p>
+<ul style="text-align: left; margin-top: 15px; padding-left: 20px;">
+<li style="margin-bottom: 10px;">Diapositives interactives</li>
+<li style="margin-bottom: 10px;">Captures d'écran de signaux réels</li>
+<li style="margin-bottom: 10px;">Exercices pratiques imprimables</li>
+</ul>
+</div>
+<div class="format-card">
+<div class="format-icon"><i class="fas fa-hands-helping"></i></div>
+<h3>Atelier Pratique</h3>
+<p>Option manipulation directe pour les élèves :</p>
+<ul style="text-align: left; margin-top: 15px; padding-left: 20px;">
+<li style="margin-bottom: 10px;">Utilisation de récepteurs SDR grand public</li>
+<li style="margin-bottom: 10px;">Capture et analyse de signaux réels</li>
+<li>Création d'un petit projet de transmission</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+<div class="container">
+<h2 class="section-title">Me <span>Contacter</span></h2>
+<p class="section-subtitle">Prêt à amener la radio dans votre établissement ?</p>
+<div class="contact-grid">
+<div class="contact-info">
+<h3>Coordonnées Professionnelles</h3>
+<div class="contact-item">
+<div class="contact-icon"><i class="fas fa-envelope"></i></div>
+<div>
+<h4>Email</h4>
+<p>leochouarbi@gmail.com</p>
+</div>
+</div>
+<div class="contact-item">
+<div class="contact-icon"><i class="fas fa-phone"></i></div>
+<div>
+<h4>Téléphone</h4>
+<p>+33 7 83 68 62 81</p>
+</div>
+</div>
+<div class="contact-item">
+<div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+<div>
+<h4>Localisation</h4>
+<p>Paris, France</p>
+</div>
+</div>
+</div>
+<div class="contact-form">
+<form id="contactForm">
+<input type="text" placeholder="Nom complet de l'enseignant *" required>
+<input type="email" placeholder="Email professionnel *" required>
+<input type="text" placeholder="Nom de l'établissement *">
+<textarea placeholder="Votre projet pédagogique ou questions..."></textarea>
+<button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Envoyer ma demande</button>
+</form>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer>
+<p>RadioÉcole – Ateliers de radiofréquence pour les établissements scolaires</p>
+<p class="copyright">© 2025 Tous droits réservés</p>
+</footer>
+
+<!-- Scripts -->
+<script>
+// === Enregistrement obligatoire des plugins GSAP ===
+gsap.registerPlugin(ScrollTrigger);
+// --- Fonction d'initialisation ---
+document.addEventListener('DOMContentLoaded', () => {
+initPreloader();
+initCursor();
+initHeroAnimation();
+initModuleCards();
+initAnimations();
+initSmoothNav();
+initContactForm();
+});
+
+// --- Preloader ---
+function initPreloader() {
+const preloader = document.getElementById('preloader');
+if (!preloader) return;
+setTimeout(() => {
+preloader.style.opacity = '0';
+setTimeout(() => preloader.style.display = 'none', 600);
+}, 2800);
+}
+
+// --- Custom Cursor ---
+function initCursor() {
+const cursor = document.getElementById('cursor');
+const cursorFollower = document.getElementById('cursor-follower');
+if (!cursor || !cursorFollower) return;
+document.addEventListener('mousemove', (e) => {
+gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+gsap.to(cursorFollower, { x: e.clientX, y: e.clientY, duration: 0.3 });
+});
+const interactive = document.querySelectorAll('a, button, .card, .module-card, .method-card, .public-point, .format-card, .value-card, input, textarea, .demo-card');
+interactive.forEach(el => {
+el.addEventListener('mouseenter', () => {
+gsap.to(cursor, { scale: 2, duration: 0.2 });
+gsap.to(cursorFollower, { scale: 3, opacity: 0.1, duration: 0.2 });
+});
+el.addEventListener('mouseleave', () => {
+gsap.to(cursor, { scale: 1, duration: 0.2 });
+gsap.to(cursorFollower, { scale: 1, opacity: 1, duration: 0.2 });
+});
+});
+document.addEventListener('mousedown', () => {
+gsap.to(cursor, { scale: 1.4, duration: 0.1 });
+gsap.to(cursorFollower, { scale: 0.9, opacity: 0.4, duration: 0.1 });
+});
+document.addEventListener('mouseup', () => {
+gsap.to(cursor, { scale: 1, duration: 0.1 });
+gsap.to(cursorFollower, { scale: 1, opacity: 1, duration: 0.1 });
+});
+}
+
+// --- Hero animation (Three.js) ---
+function initHeroAnimation() {
+const canvasContainer = document.getElementById('heroCanvas');
+if (!canvasContainer || !window.THREE) return;
+try {
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, canvasContainer.offsetWidth / canvasContainer.offsetHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+const resize = () => {
+const w = canvasContainer.offsetWidth || window.innerWidth;
+const h = canvasContainer.offsetHeight || window.innerHeight;
+camera.aspect = w / h;
+camera.updateProjectionMatrix();
+renderer.setSize(w, h);
+};
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+resize();
+const particlesGeometry = new THREE.BufferGeometry();
+const particleCount = 2000;
+const posArray = new Float32Array(particleCount * 3);
+const colorArray = new Float32Array(particleCount * 3);
+for (let i = 0; i < particleCount * 3; i += 3) {
+posArray[i] = (Math.random() - 0.5) * 20;
+posArray[i + 1] = (Math.random() - 0.5) * 20;
+posArray[i + 2] = (Math.random() - 0.5) * 20;
+colorArray[i] = 0.0; // R
+colorArray[i + 1] = 0.8; // G
+colorArray[i + 2] = 1.0; // B
+}
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+const particlesMaterial = new THREE.PointsMaterial({
+size: 0.05,
+vertexColors: true,
+transparent: true,
+opacity: 0.8
+});
+const particleSystem = new THREE.Points(particlesGeometry, particlesMaterial);
+scene.add(particleSystem);
+camera.position.z = 10;
+const animate = () => {
+requestAnimationFrame(animate);
+particleSystem.rotation.x += 0.0001;
+particleSystem.rotation.y += 0.0005;
+const positions = particlesGeometry.attributes.position.array;
+for (let i = 0; i < positions.length; i += 3) {
+positions[i + 1] = Math.sin(positions[i] * 2 + Date.now() * 0.001) * 0.5;
+}
+particlesGeometry.attributes.position.needsUpdate = true;
+renderer.render(scene, camera);
+};
+window.addEventListener('resize', resize);
+animate();
+canvasContainer.appendChild(renderer.domElement);
+} catch (e) {
+console.error('Three.js init error:', e);
+}
+}
+
+// --- GSAP animations ---
+function initAnimations() {
+gsap.fromTo('.hero h1', { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1.4, ease: "power3.out", delay: 0.2 });
+gsap.fromTo('.hero-subtitle', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 0.5 });
+gsap.fromTo('.hero p', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.2, ease: "power3.out", delay: 0.7, stagger: 0.1 });
+gsap.fromTo('.hero-btns', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 1.0 });
+gsap.utils.toArray('.section-title, .section-subtitle').forEach((el) => {
+gsap.fromTo(el, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 90%" } });
+});
+gsap.utils.toArray('.module-card').forEach((card, i) => {
+gsap.fromTo(card, { opacity: 0, y: 60, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 1, ease: "power3.out", scrollTrigger: { trigger: card, start: "top 85%" }, delay: i * 0.05 });
+});
+gsap.utils.toArray('.demo-card, .method-card, .format-card').forEach((el, i) => {
+gsap.fromTo(el, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: el, start: "top 85%" }, delay: i * 0.05 });
+});
+gsap.fromTo('.contact-grid', { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: '.contact-grid', start: "top 85%" } });
+gsap.fromTo('footer', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: 'footer', start: "top 90%" } });
+}
+
+// --- Navigation smooth scroll ---
+function initSmoothNav() {
+document.querySelectorAll('nav a, .hero-btns a').forEach(link => {
+link.addEventListener('click', (e) => {
+e.preventDefault();
+const targetId = link.getAttribute('href');
+const targetElement = document.querySelector(targetId);
+if (targetElement) {
+window.scrollTo({
+top: targetElement.offsetTop - 80,
+behavior: 'smooth'
+});
+// Mise à jour de la classe active dans la navigation
+document.querySelectorAll('nav a').forEach(navLink => {
+navLink.classList.remove('active');
+});
+link.classList.add('active');
+}
+});
+});
+}
+
+// --- Form submission (demo) ---
+function initContactForm() {
+const contactForm = document.getElementById('contactForm');
+if (!contactForm) return;
+contactForm.addEventListener('submit', (e) => {
+e.preventDefault();
+const submitBtn = contactForm.querySelector('.submit-btn');
+submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+submitBtn.disabled = true;
+setTimeout(() => {
+alert('✅ Votre demande a bien été envoyée !\nJe vous répondrai sous 48h pour établir un devis personnalisé.');
+contactForm.reset();
+submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer ma demande';
+submitBtn.disabled = false;
+}, 2000);
+});
+}
+
+// --- Module Cards ---
+function initModuleCards() {
+// Déjà géré dans initAnimations → suppression redondante
+}
+</script>
+</body>
+</html>
