@@ -323,21 +323,43 @@
   let soundOn = localStorage.getItem('uiSound') === '1';
   const ensureAudio = () => {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
     return audioCtx;
   };
-  const uiBeep = (freq = 440, vol = 0.05, dur = 0.07) => {
+  const uiBeep = (freq = 440, vol = 0.12, dur = 0.09, type = 'sine') => {
     if (!soundOn) return;
     try {
       const ctx = ensureAudio();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.frequency.value = freq;
-      osc.type = 'sine';
-      gain.gain.setValueAtTime(vol, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+      osc.type = type;
+      const now = ctx.currentTime;
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(vol, now + 0.005);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
       osc.connect(gain).connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + dur);
+      osc.start(now);
+      osc.stop(now + dur);
+    } catch {}
+  };
+  // Petit "blip" double-fréquence pour effet plus radio/SDR
+  const uiChirp = (f1, f2, dur = 0.12, vol = 0.1) => {
+    if (!soundOn) return;
+    try {
+      const ctx = ensureAudio();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      const now = ctx.currentTime;
+      osc.frequency.setValueAtTime(f1, now);
+      osc.frequency.exponentialRampToValueAtTime(f2, now + dur);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(vol, now + 0.008);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + dur);
     } catch {}
   };
   const soundBtn = document.getElementById('soundToggle');
@@ -347,11 +369,30 @@
       soundOn = !soundOn;
       localStorage.setItem('uiSound', soundOn ? '1' : '0');
       soundBtn.setAttribute('aria-pressed', String(soundOn));
-      if (soundOn) { ensureAudio(); uiBeep(660, 0.06); }
+      if (soundOn) { ensureAudio(); uiChirp(440, 880, 0.18, 0.14); }
     });
+    // Sons différenciés par type d'élément
     document.addEventListener('click', (e) => {
-      if (e.target.closest('a, button, .band')) uiBeep(520, 0.03, 0.05);
+      if (!soundOn) return;
+      const t = e.target;
+      if (t.closest('.btn--primary, .nav__cta')) uiChirp(520, 880, 0.14, 0.13);
+      else if (t.closest('.band')) {
+        // Pitch selon la position de la bande dans le spectre
+        const bands = [...document.querySelectorAll('.band')];
+        const i = bands.indexOf(t.closest('.band'));
+        uiBeep(440 + i * 110, 0.1, 0.1, 'sine');
+      }
+      else if (t.closest('button, summary')) uiBeep(660, 0.09, 0.07, 'sine');
+      else if (t.closest('a')) uiBeep(880, 0.07, 0.06, 'sine');
     });
+    // Survol des éléments interactifs : très bref tick
+    document.addEventListener('pointerenter', (e) => {
+      if (!soundOn || !finePointer) return;
+      const t = e.target;
+      if (t.matches && t.matches('.bento__card, .audience__card, .method__card, .format__card')) {
+        uiBeep(1200, 0.04, 0.03, 'sine');
+      }
+    }, true);
   }
 
   // ─── Spectrum cursor tag
