@@ -363,6 +363,9 @@
     } catch {}
   };
   const soundBtn = document.getElementById('soundToggle');
+  // Expose globalement pour que les autres handlers puissent en tirer
+  window.__uiBeep = uiBeep;
+  window.__uiChirp = uiChirp;
   if (soundBtn) {
     soundBtn.setAttribute('aria-pressed', String(soundOn));
     soundBtn.addEventListener('click', () => {
@@ -441,8 +444,47 @@
       baBefore.style.clipPath = `inset(0 ${100 - val}% 0 0)`;
       baHandle.style.left = val + '%';
     };
-    baRange.addEventListener('input', (e) => update(e.target.value));
+    let baLastSound = 0;
+    baRange.addEventListener('input', (e) => {
+      update(e.target.value);
+      // Sweep réglable : pitch lié à la position du curseur, throttlé à 30ms
+      const now = performance.now();
+      if (window.__uiBeep && now - baLastSound > 35) {
+        baLastSound = now;
+        const v = +e.target.value;
+        window.__uiBeep(200 + v * 10, 0.05, 0.025, 'sine');
+      }
+    });
     update(50);
+  }
+
+  // ─── Sounds : focus champs, ouverture FAQ, etc.
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    el.addEventListener('focus', () => window.__uiBeep && window.__uiBeep(700, 0.06, 0.06, 'sine'));
+  });
+  document.querySelectorAll('details.faq__item').forEach(d => {
+    d.addEventListener('toggle', () => {
+      if (!window.__uiChirp) return;
+      d.open ? window.__uiChirp(440, 720, 0.12, 0.1) : window.__uiChirp(720, 440, 0.1, 0.08);
+    });
+  });
+  // Theme toggle : son grave/aigu selon clair/sombre
+  const _themeToggleEl = document.getElementById('themeToggle');
+  if (_themeToggleEl) {
+    _themeToggleEl.addEventListener('click', () => {
+      if (!window.__uiChirp) return;
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      isLight ? window.__uiChirp(880, 440, 0.18, 0.12) : window.__uiChirp(440, 880, 0.18, 0.12);
+    });
+  }
+  // Burger menu open/close
+  const _burgerEl = document.getElementById('burger');
+  if (_burgerEl) {
+    _burgerEl.addEventListener('click', () => {
+      if (!window.__uiChirp) return;
+      const open = _burgerEl.getAttribute('aria-expanded') === 'true';
+      open ? window.__uiChirp(660, 330, 0.16, 0.1) : window.__uiChirp(330, 660, 0.16, 0.1);
+    });
   }
 
   // ─── Morse easter egg "..." ".._.."
