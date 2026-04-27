@@ -89,14 +89,17 @@ em{
   -webkit-text-fill-color:transparent;color:transparent;
 }
 /* Inner spans (créés par split-text) doivent hériter du dégradé.
-   `background:inherit` peut sauter sur la dernière lettre selon les navigateurs
-   → on redéclare explicitement la gradient + on force color:transparent partout. */
+   On étend légèrement le fond (padding+margin compensé) pour que le
+   glyphe (notamment les bouts arrondis du « e ») reste couvert,
+   et on force color:transparent partout. */
 em > span{
   background:var(--grad-primary);
   background-clip:text;
   -webkit-background-clip:text;
   color:transparent;
   -webkit-text-fill-color:transparent;
+  padding-right:.08em;
+  margin-right:-.08em;
 }
 
 p{color:var(--muted)}
