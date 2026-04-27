@@ -1118,7 +1118,25 @@ kbd{
   transition:color .25s, border-color .25s, transform .25s var(--ease), background .25s;
 }
 .ui-btn:hover{color:var(--primary);border-color:rgba(0,240,255,.3);transform:translateY(-2px)}
-.ui-btn[aria-pressed="true"]{color:var(--primary);border-color:var(--primary);background:rgba(0,240,255,.08)}
+.ui-btn[aria-pressed="true"]{color:var(--primary);border-color:var(--primary);background:rgba(0,240,255,.12);box-shadow:0 0 16px -4px rgba(0,240,255,.5)}
+
+/* Switch icônes ON/OFF dans #soundToggle */
+#soundToggle .ui-btn__icon{position:absolute;transition:opacity .2s, transform .25s var(--ease)}
+#soundToggle{position:relative}
+#soundToggle .ui-btn__icon--on{opacity:0;transform:scale(.7)}
+#soundToggle .ui-btn__icon--off{opacity:1;transform:scale(1)}
+#soundToggle[aria-pressed="true"] .ui-btn__icon--on{opacity:1;transform:scale(1)}
+#soundToggle[aria-pressed="true"] .ui-btn__icon--off{opacity:0;transform:scale(.7)}
+/* Petit pulse quand actif pour signaler "ça émet" */
+#soundToggle[aria-pressed="true"]::after{
+  content:"";position:absolute;inset:-4px;border-radius:50%;
+  border:1px solid var(--primary);opacity:.5;
+  animation:soundPulse 1.6s ease-out infinite;pointer-events:none;
+}
+@keyframes soundPulse{
+  from{transform:scale(.95);opacity:.5}
+  to  {transform:scale(1.25);opacity:0}
+}
 
 /* ============================================================
    Manifest section
