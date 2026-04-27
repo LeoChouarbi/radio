@@ -57,7 +57,7 @@
   }
 
   // ─── Reveal on scroll
-  const revealEls = document.querySelectorAll('.section-head, .bento__card, .method__card, .format__card, .contact__info, .contact__form, .testimonial__quote, .stat-card, .audience__card, .ai__feature, .ai__visual, .manifest__line, .ba, .analyzer');
+  const revealEls = document.querySelectorAll('.section-head, .bento__card, .method__card, .format__card, .contact__info, .contact__form, .testimonial__quote, .stat-card, .audience__card, .ai__feature, .ai__visual, .manifest__line, .ba');
   revealEls.forEach(el => el.setAttribute('data-reveal', ''));
   const revObs = new IntersectionObserver((entries) => {
     entries.forEach(e => {
@@ -371,74 +371,6 @@
         tag.style.top  = e.clientY + 'px';
       });
       b.addEventListener('mouseleave', () => tag.classList.remove('is-show'));
-    });
-  }
-
-  // ─── Web Audio FFT analyzer (opt-in microphone)
-  const aBtn = document.getElementById('analyzerToggle');
-  const aCanvas = document.getElementById('analyzerCanvas');
-  const aWrap = document.getElementById('analyzer');
-  const aLabel = document.getElementById('analyzerLabel');
-  if (aBtn && aCanvas) {
-    let stream = null, analyser = null, dataArr = null, raf = null;
-    const ctx2 = aCanvas.getContext('2d');
-    let cw, ch;
-    const resizeA = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const r = aCanvas.getBoundingClientRect();
-      cw = r.width; ch = r.height;
-      aCanvas.width = cw * dpr; aCanvas.height = ch * dpr;
-      ctx2.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-    window.addEventListener('resize', resizeA);
-
-    const draw = () => {
-      raf = requestAnimationFrame(draw);
-      analyser.getByteFrequencyData(dataArr);
-      ctx2.clearRect(0, 0, cw, ch);
-      const barCount = 80;
-      const step = Math.floor(dataArr.length / barCount);
-      const barW = cw / barCount;
-      for (let i = 0; i < barCount; i++) {
-        const v = dataArr[i * step] / 255;
-        const h = v * ch * 0.95;
-        const grad = ctx2.createLinearGradient(0, ch, 0, ch - h);
-        grad.addColorStop(0, 'rgba(0,240,255,0.85)');
-        grad.addColorStop(1, 'rgba(255,46,136,0.7)');
-        ctx2.fillStyle = grad;
-        ctx2.fillRect(i * barW + 1, ch - h, barW - 2, h);
-      }
-    };
-
-    const start = async () => {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const ctx = ensureAudio();
-        await ctx.resume();
-        const src = ctx.createMediaStreamSource(stream);
-        analyser = ctx.createAnalyser();
-        analyser.fftSize = 1024;
-        dataArr = new Uint8Array(analyser.frequencyBinCount);
-        src.connect(analyser);
-        resizeA();
-        aWrap.classList.add('is-on');
-        aLabel.textContent = 'Couper le micro';
-        draw();
-      } catch (err) {
-        aLabel.textContent = 'Micro refusé';
-        setTimeout(() => { aLabel.textContent = 'Activer le micro'; }, 2500);
-      }
-    };
-    const stop = () => {
-      if (raf) cancelAnimationFrame(raf);
-      if (stream) stream.getTracks().forEach(t => t.stop());
-      stream = null;
-      ctx2.clearRect(0, 0, cw, ch);
-      aWrap.classList.remove('is-on');
-      aLabel.textContent = 'Activer le micro';
-    };
-    aBtn.addEventListener('click', () => {
-      aWrap.classList.contains('is-on') ? stop() : start();
     });
   }
 
