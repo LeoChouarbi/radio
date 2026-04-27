@@ -1,1259 +1,817 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>RadioÉcole | Cours Radiofréquence pour Établissements</title>
-<!-- Fonts & libs -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#05060A" />
+<title>RadioÉcole — Initiation à la radiofréquence pour les établissements</title>
+<meta name="description" content="Ateliers et modules d'initiation aux ondes radio, pour collèges, lycées et écoles d'ingénieurs. Approche pédagogique concrète, démos SDR en direct, programme adaptable." />
+<meta name="author" content="RadioÉcole" />
+
+<!-- Open Graph / social -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="RadioÉcole — Faire entendre l'invisible aux étudiants" />
+<meta property="og:description" content="Programme clé-en-main pour amener la radiofréquence en classe. Démos SDR, modules de 1h30 à 3 jours." />
+<meta property="og:locale" content="fr_FR" />
+<meta name="twitter:card" content="summary_large_image" />
+<!-- Schema.org -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "RadioRécole",
+  "description": "Ateliers d'initiation à la radiofréquence pour collèges, lycées et écoles d'ingénieurs.",
+  "url": "https://radioecole.fr",
+  "areaServed": "FR",
+  "founder": { "@type": "Person", "name": "Léo Chouarbi" },
+  "email": "leoradio.pro@gmail.com",
+  "telephone": "+33783686281",
+  "address": { "@type": "PostalAddress", "addressLocality": "Paris", "addressCountry": "FR" },
+  "offers": {
+    "@type": "Course",
+    "name": "Initiation à la radiofréquence",
+    "description": "9 modules progressifs de Maxwell à la 5G, avec démos SDR en direct et atelier IA.",
+    "provider": { "@type": "Organization", "name": "RadioRécole" }
+  }
+}
+</script>
+<!-- Favicon SVG inline -->
+<link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='3' fill='%2300F0FF'/><circle cx='16' cy='16' r='8' fill='none' stroke='%2300F0FF' stroke-width='1.5' opacity='.7'/><circle cx='16' cy='16' r='13' fill='none' stroke='%2300F0FF' stroke-width='1' opacity='.4'/></svg>" />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
 <!-- Styles -->
-<style>
-/* Styles globaux (identiques à votre version préférée) */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #0a0e17;
-  color: #e6f1ff;
-  overflow-x: hidden;
-  line-height: 1.6;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.section-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 3.5rem;
-  margin-bottom: 1rem;
-  color: white;
-  text-align: center;
-}
-
-.section-title span {
-  color: #00f3ff;
-  position: relative;
-  padding-bottom: 8px;
-}
-
-.section-title span::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #00f3ff, transparent);
-}
-
-.section-subtitle {
-  text-align: center;
-  font-size: 1.4rem;
-  margin-bottom: 4rem;
-  color: #8892b0;
-}
-
-/* Preloader */
-.preloader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #0a0e17;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  transition: opacity 0.6s ease;
-}
-
-.loader-container {
-  text-align: center;
-}
-
-.loader {
-  width: 80px;
-  height: 80px;
-  position: relative;
-}
-
-.loader-ring {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border: 4px solid transparent;
-  border-top-color: #00f3ff;
-  border-radius: 50%;
-  animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-}
-
-.loader-ring:nth-child(2) {
-  animation-delay: -0.4s;
-  border-top-color: #6a5af9;
-}
-
-.loader-ring:nth-child(3) {
-  animation-delay: -0.8s;
-  border-top-color: #ff2ec4;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loader-text {
-  margin-top: 20px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.2rem;
-  color: #00f3ff;
-  letter-spacing: 2px;
-}
-
-/* Custom Cursor */
-.cursor {
-  position: fixed;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: #00f3ff;
-  mix-blend-mode: difference;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: transform 0.1s ease;
-}
-
-.cursor-follower {
-  position: fixed;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: rgba(0, 243, 255, 0.1);
-  pointer-events: none;
-  z-index: 9998;
-  transform: translate(-50%, -50%);
-  transition: transform 0.3s ease;
-}
-
-/* Header */
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 1.5rem 0;
-  z-index: 1000;
-  transition: background 0.3s ease;
-}
-
-header.scrolled {
-  background: rgba(10, 14, 23, 0.95);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-}
-
-.logo {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: white;
-  text-decoration: none;
-  margin-left: 20px;
-}
-
-nav {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-right: 20px;
-}
-
-nav a {
-  color: #8892b0;
-  text-decoration: none;
-  font-weight: 500;
-  position: relative;
-  padding: 5px 0;
-  transition: color 0.3s ease;
-}
-
-nav a:hover,
-nav a.active {
-  color: white;
-}
-
-nav a::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: #00f3ff;
-  transition: width 0.3s ease;
-}
-
-nav a:hover::after,
-nav a.active::after {
-  width: 100%;
-}
-
-/* Hero Section */
-.hero {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  padding: 0;
-}
-
-.hero-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.hero-content {
-  max-width: 800px;
-  text-align: center;
-  z-index: 2;
-  padding: 0 20px;
-}
-
-.hero h1 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 4rem;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(90deg, #6a5af9, #00f3ff);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  line-height: 1.2;
-}
-
-.hero-subtitle {
-  font-size: 1.8rem;
-  color: #00f3ff;
-  margin-bottom: 1.5rem;
-}
-
-.hero p {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-  color: #a8b2d1;
-}
-
-.hero-btns {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  margin-top: 2rem;
-}
-
-.btn {
-  padding: 14px 35px;
-  border-radius: 50px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-}
-
-.btn-primary {
-  background: linear-gradient(90deg, #6a5af9, #00f3ff);
-  color: white;
-  box-shadow: 0 5px 15px rgba(106, 90, 249, 0.4);
-}
-
-.btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(106, 90, 249, 0.6);
-}
-
-.btn-secondary {
-  background: transparent;
-  color: white;
-  border: 2px solid #6a5af9;
-}
-
-.btn-secondary:hover {
-  background: rgba(106, 90, 249, 0.1);
-  transform: translateY(-3px);
-}
-
-/* Modules Section */
-#modules {
-  padding: 100px 0;
-  background: linear-gradient(135deg, #0a192f 0%, #112240 100%);
-}
-
-.modules-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-  margin-top: 50px;
-}
-
-.module-card {
-  background: rgba(16, 32, 64, 0.6);
-  border-radius: 20px;
-  padding: 35px 30px;
-  text-align: center;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(106, 90, 249, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.module-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 30px rgba(0, 243, 255, 0.15);
-}
-
-.module-icon {
-  font-size: 3rem;
-  margin-bottom: 20px;
-  color: #00f3ff;
-}
-
-.module-card h3 {
-  font-size: 1.6rem;
-  margin-bottom: 15px;
-  color: white;
-}
-
-.module-card p {
-  color: #a8b2d1;
-  font-size: 1.1rem;
-}
-
-/* Ajout de styles pour la nouvelle section Démonstrations */
-.demo-section {
-  background: linear-gradient(135deg, #0a192f 0%, #112240 100%);
-  padding: 100px 0;
-}
-
-.demo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-  margin-top: 50px;
-}
-
-.demo-card {
-  background: rgba(16, 32, 64, 0.6);
-  border-radius: 20px;
-  padding: 30px;
-  text-align: center;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(106, 90, 249, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.demo-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 30px rgba(0, 243, 255, 0.15);
-}
-
-.demo-icon {
-  font-size: 48px;
-  margin-bottom: 20px;
-  color: #00f3ff;
-}
-
-.demo-image {
-  margin-top: 25px;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  position: relative;
-}
-
-.demo-image img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-}
-
-.demo-card:hover .demo-image img {
-  transform: scale(1.05);
-}
-
-.image-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(10, 25, 47, 0.9);
-  color: white;
-  padding: 12px;
-  text-align: center;
-  font-weight: 500;
-}
-
-/* Méthodologie */
-#methodologie {
-  padding: 100px 0;
-  background: linear-gradient(135deg, #112240 0%, #0a192f 100%);
-}
-
-.methodology-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-  margin-top: 50px;
-}
-
-.method-card {
-  background: rgba(16, 32, 64, 0.7);
-  border-radius: 20px;
-  padding: 30px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(106, 90, 249, 0.3);
-  transition: transform 0.3s ease;
-}
-
-.method-card:hover {
-  transform: translateY(-5px);
-}
-
-.method-icon {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  color: #00f3ff;
-}
-
-.method-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 15px;
-  color: white;
-}
-
-.method-card p {
-  color: #a8b2d1;
-  margin-bottom: 20px;
-  min-height: 80px;
-}
-
-/* Styles pour uniformiser les images de la section Méthodologie */
-.method-card img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 12px;
-  margin-top: 15px;
-  box-shadow: 0 4px 15px rgba(0, 243, 255, 0.2);
-  transition: transform 0.3s ease;
-}
-
-.method-card:hover img {
-  transform: scale(1.03);
-}
-
-/* Format section */
-#format {
-  padding: 100px 0;
-  background: linear-gradient(135deg, #0a192f 0%, #112240 100%);
-}
-
-.format-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-  margin-top: 50px;
-}
-
-.format-card {
-  background: rgba(16, 32, 64, 0.6);
-  border-radius: 20px;
-  padding: 35px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(106, 90, 249, 0.3);
-  text-align: center;
-  transition: transform 0.3s ease;
-}
-
-.format-card:hover {
-  transform: translateY(-5px);
-}
-
-.format-icon {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  color: #00f3ff;
-}
-
-.format-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 15px;
-  color: white;
-}
-
-.duration-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 15px;
-  justify-content: center;
-}
-
-.duration-tag {
-  background: rgba(0, 243, 255, 0.15);
-  color: #00f3ff;
-  padding: 5px 15px;
-  border-radius: 15px;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-/* Contact Section */
-#contact {
-  padding: 100px 0;
-  background: linear-gradient(135deg, #112240 0%, #0a192f 100%);
-}
-
-.contact-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 40px;
-  margin-top: 50px;
-}
-
-.contact-info h3 {
-  font-size: 1.8rem;
-  margin-bottom: 30px;
-  color: white;
-  text-align: center;
-}
-
-.contact-item {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 25px;
-  align-items: flex-start;
-}
-
-.contact-icon {
-  font-size: 1.8rem;
-  color: #00f3ff;
-  min-width: 30px;
-}
-
-.contact-item h4 {
-  color: white;
-  margin-bottom: 5px;
-}
-
-.contact-item p, .contact-item a {
-  color: #a8b2d1;
-  text-decoration: none;
-}
-
-.contact-item a:hover {
-  color: #00f3ff;
-}
-
-.contact-form {
-  background: rgba(16, 32, 64, 0.6);
-  border-radius: 20px;
-  padding: 40px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(106, 90, 249, 0.3);
-}
-
-.contact-form input,
-.contact-form textarea {
-  width: 100%;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(106, 90, 249, 0.3);
-  background: rgba(10, 25, 47, 0.5);
-  color: white;
-  font-size: 1rem;
-  font-family: 'Inter', sans-serif;
-}
-
-.contact-form input::placeholder,
-.contact-form textarea::placeholder {
-  color: #8892b0;
-}
-
-.contact-form textarea {
-  min-height: 150px;
-  resize: vertical;
-}
-
-.submit-btn {
-  width: 100%;
-  padding: 15px;
-  background: linear-gradient(90deg, #6a5af9, #00f3ff);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(106, 90, 249, 0.4);
-}
-
-.submit-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.form-status {
-  padding: 12px;
-  margin: 15px 0;
-  border-radius: 8px;
-  text-align: center;
-  font-weight: 500;
-}
-
-.success {
-  background: rgba(0, 255, 136, 0.15);
-  color: #00ff88;
-  border: 1px solid #00ff88;
-}
-
-.error {
-  background: rgba(255, 0, 0, 0.15);
-  color: #ff5555;
-  border: 1px solid #ff5555;
-}
-
-/* Footer */
-footer {
-  background: #020c1b;
-  padding: 40px 0;
-  text-align: center;
-  margin-top: 50px;
-}
-
-footer p {
-  color: #8892b0;
-  font-size: 1.1rem;
-}
-
-.copyright {
-  color: #64ffda;
-  margin-top: 10px;
-  font-weight: 500;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .section-title {
-    font-size: 2.5rem;
-  }
-  
-  .hero h1 {
-    font-size: 2.8rem;
-  }
-  
-  .hero-subtitle {
-    font-size: 1.4rem;
-  }
-  
-  .hero-btns {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  nav {
-    display: none;
-  }
-  
-  .methodology-grid,
-  .modules-grid,
-  .demo-grid,
-  .contact-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Helper classes */
-.centered {
-  text-align: center !important;
-}
-
-/* Pour les sections avec background */
-.perspectives-bg {
-  background: linear-gradient(135deg, #0a192f 0%, #112240 100%);
-}
-</style>
+<link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-<!-- Preloader -->
-<div class="preloader" id="preloader">
-<div class="loader-container">
-<div class="loader">
-<div class="loader-ring"></div>
-<div class="loader-ring"></div>
-<div class="loader-ring"></div>
+
+<!-- Skip link a11y -->
+<a class="skip-link" href="#hero">Aller au contenu principal</a>
+
+<!-- ░░ Preloader ░░ -->
+<div class="preloader" id="preloader" aria-hidden="true">
+  <svg viewBox="0 0 200 60" class="preloader__wave" aria-hidden="true">
+    <path d="M0 30 Q 25 5 50 30 T 100 30 T 150 30 T 200 30" fill="none" stroke="currentColor" stroke-width="2"/>
+  </svg>
+  <span class="preloader__label">Calibration du signal…</span>
 </div>
-<div class="loader-text">CHARGEMENT</div>
-</div>
-</div>
-<!-- Custom Cursor -->
-<div class="cursor" id="cursor"></div>
-<div class="cursor-follower" id="cursor-follower"></div>
-<!-- Header -->
-<header id="header">
-<a href="#hero" class="logo">RadioÉcole</a>
-<nav>
-<a href="#hero" class="active">Accueil</a>
-<a href="#modules">Programme</a>
-<a href="#demo">Démonstrations</a>
-<a href="#methodologie">Méthodologie</a>
-<a href="#format">Format</a>
-<a href="#contact">Contact</a>
-</nav>
+
+<!-- ░░ Cursor (desktop only) ░░ -->
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+
+<!-- ░░ Header ░░ -->
+<header class="site-header" id="header">
+  <a href="#hero" class="brand" aria-label="RadioÉcole — accueil">
+    <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
+      <circle cx="16" cy="16" r="3" fill="currentColor"/>
+      <circle cx="16" cy="16" r="8" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".7"/>
+      <circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="1" opacity=".4"/>
+    </svg>
+    <span>Radio<span class="brand__accent">École</span></span>
+  </a>
+
+  <nav class="nav" id="nav" aria-label="Navigation principale">
+    <a href="#programme">Programme</a>
+    <a href="#public">Pour qui</a>
+    <a href="#ia">IA × Radio</a>
+    <a href="#format">Format</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact" class="nav__cta">Planifier un atelier</a>
+  </nav>
+
+  <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav">
+    <span></span><span></span><span></span>
+  </button>
 </header>
-<!-- Hero -->
+
+<!-- Floating UI controls -->
+<div class="ui-controls" aria-label="Préférences">
+  <button class="ui-btn" id="themeToggle" aria-label="Changer de thème" title="Thème">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+  <button class="ui-btn" id="soundToggle" aria-label="Activer les sons d'interface" title="Sons UI" aria-pressed="false">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+      <path d="M11 5 6 9H2v6h4l5 4z"/><path d="M22 9l-6 6M16 9l6 6"/>
+    </svg>
+  </button>
+</div>
+
+<main>
+
+<!-- ░░ Hero ░░ -->
 <section id="hero" class="hero">
-<div class="hero-bg" id="heroCanvas"></div>
-<div class="container">
-<div class="hero-content">
-<h1>Initiation à la Radiofréquence</h1>
-<div class="hero-subtitle">Découvrez le monde invisible des ondes</div>
-<p>Des ondes radio aux communications 5G, explorez le spectre électromagnétique qui relie notre monde.</p>
-<p>Formation développée pour des étudiants BAC+4 à l'ESIEA, école d'ingénieurs.</p>
-<div class="hero-btns">
-<a href="#modules" class="btn btn-primary">
-<i class="fas fa-rocket"></i> Découvrir le programme
-</a>
-<a href="#contact" class="btn btn-secondary">
-<i class="fas fa-calendar-check"></i> Planifier un atelier
-</a>
-</div>
-</div>
-</div>
+  <canvas class="hero__canvas" id="oscilloscope" aria-hidden="true"></canvas>
+  <div class="hero__grain" aria-hidden="true"></div>
+
+  <div class="hero__inner">
+    <div class="eyebrow">
+      <span class="eyebrow__dot"></span>
+      <span>Programme pédagogique · 2025–2026</span>
+    </div>
+
+    <h1 class="hero__title" data-split>
+      Faire entendre <em>l'invisible</em><br/>aux étudiants.
+    </h1>
+
+    <p class="hero__lede">
+      Un programme clé-en-main pour initier collégiens, lycéens et étudiants
+      ingénieurs à la radiofréquence. Du télégraphe de Marconi à la 5G,
+      avec démonstrations en direct sur dongle SDR.
+    </p>
+
+    <div class="hero__cta">
+      <a href="#contact" class="btn btn--primary" data-magnetic>
+        Planifier un atelier
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#programme" class="btn btn--ghost" data-magnetic>Découvrir le programme</a>
+    </div>
+
+    <dl class="hero__stats">
+      <div><dt data-count="9">0</dt><dd>modules progressifs</dd></div>
+      <div><dt>1h30 — 3j</dt><dd>formats adaptables</dd></div>
+      <div><dt>Collège → Ingé</dt><dd>tous niveaux scolaires</dd></div>
+    </dl>
+  </div>
+
+  <!-- Marquee fréquences -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span>87.5 MHz · FM</span><span>·</span>
+      <span>108 MHz · Aviation</span><span>·</span>
+      <span>433 MHz · IoT</span><span>·</span>
+      <span>868 MHz · LoRa</span><span>·</span>
+      <span>1.575 GHz · GPS</span><span>·</span>
+      <span>2.4 GHz · Wi-Fi</span><span>·</span>
+      <span>3.5 GHz · 5G n78</span><span>·</span>
+      <span>10.7 GHz · Satellite</span><span>·</span>
+      <span>28 GHz · 5G mmWave</span><span>·</span>
+      <!-- duplicat pour boucle -->
+      <span>87.5 MHz · FM</span><span>·</span>
+      <span>108 MHz · Aviation</span><span>·</span>
+      <span>433 MHz · IoT</span><span>·</span>
+      <span>868 MHz · LoRa</span><span>·</span>
+      <span>1.575 GHz · GPS</span><span>·</span>
+      <span>2.4 GHz · Wi-Fi</span><span>·</span>
+      <span>3.5 GHz · 5G n78</span><span>·</span>
+    </div>
+  </div>
 </section>
 
-<!-- Section Démonstrations interactives -->
-<section id="demo" class="demo-section">
-<div class="container">
-<h2 class="section-title centered"><span>Démonstrations</span> Interactives</h2>
-<p class="section-subtitle centered">Des concepts complexes rendus accessibles grâce à des outils pédagogiques innovants</p>
-<div class="demo-grid">
-<div class="demo-card">
-<div class="demo-icon">🖥️</div>
-<h3>Simulateur d'Ondes en Temps Réel</h3>
-<p>Visualisez la propagation des ondes à travers différents milieux avec notre simulateur exclusif.</p>
-<div class="demo-image">
-<img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600" alt="Simulateur d'ondes radio montrant la propagation à travers des matériaux">
-<div class="image-overlay">
-<span>Voir la démo interactive</span>
-</div>
-</div>
-</div>
-<div class="demo-card">
-<div class="demo-icon">🤝</div>
-<h3>Ateliers Interactifs</h3>
-<p>Participez à des sessions pratiques avec des experts pour des échanges concrets et personnalisés.</p>
-<div class="demo-image">
-<img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600" alt="Atelier interactif avec étudiants et professeur sur la radiofréquence">
-<div class="image-overlay">
-<span>Disponible lors des ateliers</span>
-</div>
-</div>
-</div>
-<div class="demo-card">
-<div class="demo-icon">🌐</div>
-<h3>Interdisciplinarité</h3>
-<p>Découvrez les applications concrètes en médecine (IRM), astronomie (télescopes radio), IoT et communications spatiales.</p>
-<div class="demo-image">
-<img src="https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?auto=format&fit=crop&w=600" alt="Applications interdisciplinaires des ondes radio dans différents domaines">
-<div class="image-overlay">
-<span>Cas pratiques inclus</span>
-</div>
-</div>
-</div>
-</div>
-</div>
+<!-- ░░ Manifest ░░ -->
+<section id="manifest" class="manifest" aria-label="Notre approche">
+  <div class="manifest__inner">
+    <p class="manifest__line" data-line="1">Les ondes radio ne sont pas <em>magiques</em>.</p>
+    <p class="manifest__line" data-line="2">Elles sont juste <em>invisibles</em>.</p>
+    <p class="manifest__line manifest__line--accent" data-line="3">Mon métier&nbsp;: les rendre <em>tangibles</em>.</p>
+  </div>
 </section>
 
-<!-- Modules détaillés -->
-<section id="modules">
-<div class="container">
-<h2 class="section-title">Programme <span>Détaillé</span></h2>
-<p class="section-subtitle">9 modules progressifs pour maîtriser les fondamentaux</p>
-<div class="modules-grid">
-<div class="module-card" data-index="0">
-<div class="module-icon"><i class="fas fa-book-open"></i></div>
-<h3>Introduction & Histoire</h3>
-<p>De Maxwell à Tesla : les bases théoriques et expérimentales qui ont permis les communications sans fil. Évolution historique des technologies radio.</p>
-</div>
-<div class="module-card" data-index="1">
-<div class="module-icon"><i class="fas fa-ruler-combined"></i></div>
-<h3>Bases Physiques</h3>
-<p>Propagation des ondes : réflexion, diffraction, absorption. Relation fréquence/longueur d'onde/énergie. Expériences pratiques de visualisation.</p>
-</div>
-<div class="module-card" data-index="2">
-<div class="module-icon"><i class="fas fa-project-diagram"></i></div>
-<h3>Applications Concrètes</h3>
-<p>Étude des systèmes réels : réseaux de secours (pompiers), télécommunications (4G/5G), IoT, applications spatiales, et usages industriels.</p>
-</div>
-<div class="module-card" data-index="3">
-<div class="module-icon"><i class="fas fa-sitemap"></i></div>
-<h3>Chaîne Radio Complète</h3>
-<p>Anatomie d'un système radio : oscillateurs, modulateurs, amplificateurs, filtres, antennes. Problèmes pratiques : bruit, interférences, adaptation d'impédance.</p>
-</div>
-<div class="module-card" data-index="4">
-<div class="module-icon"><i class="fas fa-chart-line"></i></div>
-<h3>Analyse des Signaux</h3>
-<p>Concepts de Fourier vulgarisés. Visualisation spectrale avec des outils SDR (Software Defined Radio). Échantillonnage et théorème de Nyquist.</p>
-</div>
-<div class="module-card" data-index="5">
-<div class="module-icon"><i class="fas fa-wave-square"></i></div>
-<h3>Modulation & Codage</h3>
-<p>Comment l'information est portée par les ondes : AM, FM, ASK, PSK, QAM, FSK. Observations de constellations IQ et liens avec les télécoms modernes.</p>
-</div>
-<div class="module-card" data-index="6">
-<div class="module-icon"><i class="fas fa-volume-mute"></i></div>
-<h3>Bruit & Filtres</h3>
-<p>Comprendre le bruit gaussien et le rapport signal/bruit (SNR). Importance du filtrage. Démonstrations visuelles de signaux filtrés.</p>
-</div>
-<div class="module-card" data-index="7">
-<div class="module-icon"><i class="fas fa-signal"></i></div>
-<h3>Antennes</h3>
-<p>Fonctionnement, types (dipôles, Yagi, paraboliques), directivité. Adaptation d'impédance. Démonstrations pratiques selon matériel disponible.</p>
-</div>
-<div class="module-card" data-index="8">
-<div class="module-icon"><i class="fas fa-rocket"></i></div>
-<h3>Perspectives Futures</h3>
-<p>5G, bandes millimétriques, intelligence artificielle dans les communications, impact environnemental et sociétal des radiofréquences.</p>
-</div>
-</div>
-</div>
+<!-- ░░ Spectre EM ░░ -->
+<section id="spectre" class="spectrum">
+  <header class="section-head">
+    <span class="kicker">01 — Le terrain de jeu</span>
+    <h2>Le spectre <em>électromagnétique</em>, du grave à l'aigu de la lumière.</h2>
+    <p>Survolez les bandes pour découvrir leurs usages. Tout ce qu'on appelle « radio » tient dans une fine tranche d'un continuum bien plus vaste.</p>
+  </header>
+
+  <div class="spectrum__bar" id="spectrumBar">
+    <button class="band" style="--c:#5b3bff"  data-band="radio"  data-freq="3 kHz – 300 GHz" data-use="Communications, broadcasting, radar, IoT">Radio</button>
+    <button class="band" style="--c:#00f0ff"  data-band="micro"  data-freq="300 MHz – 300 GHz" data-use="Wi-Fi, four à micro-ondes, satellites, 5G mmWave">Micro-ondes</button>
+    <button class="band" style="--c:#ff7a1a"  data-band="ir"     data-freq="300 GHz – 430 THz" data-use="Télécommandes, vision nocturne, fibre optique">Infrarouge</button>
+    <button class="band" style="--c:#ffd400"  data-band="vis"    data-freq="430 – 750 THz" data-use="Lumière visible — la seule partie qu'on voit !">Visible</button>
+    <button class="band" style="--c:#a64bff"  data-band="uv"     data-freq="750 THz – 30 PHz" data-use="Stérilisation, fluorescence, bronzage">UV</button>
+    <button class="band" style="--c:#ff2e88"  data-band="x"      data-freq="30 PHz – 30 EHz" data-use="Imagerie médicale, contrôle non-destructif">Rayons X</button>
+    <button class="band" style="--c:#ff0044"  data-band="gamma"  data-freq="> 30 EHz" data-use="Radiothérapie, astrophysique des hautes énergies">Gamma</button>
+  </div>
+
+  <div class="spectrum__detail" id="spectrumDetail" aria-live="polite">
+    <span class="spectrum__detail-name">Radio</span>
+    <span class="spectrum__detail-freq">3 kHz – 300 GHz</span>
+    <p>Communications, broadcasting, radar, IoT</p>
+  </div>
+
+  <!-- Live FFT analyzer -->
+  <div class="analyzer" id="analyzer">
+    <div class="analyzer__head">
+      <div>
+        <div class="analyzer__title">Analyseur de spectre live</div>
+        <div class="analyzer__sub">Activez le micro pour visualiser en temps réel les ondes sonores autour de vous.</div>
+      </div>
+      <button class="btn btn--ghost btn--sm" id="analyzerToggle" data-magnetic>
+        <span class="analyzer__dot"></span>
+        <span id="analyzerLabel">Activer le micro</span>
+      </button>
+    </div>
+    <canvas class="analyzer__canvas" id="analyzerCanvas" aria-hidden="true"></canvas>
+  </div>
 </section>
 
-<!-- Méthodologie -->
-<section id="methodologie">
-<div class="container">
-<h2 class="section-title"><span>Méthodologie</span> Innovante</h2>
-<p class="section-subtitle">Rendre la physique concrète et passionnante</p>
-<div class="methodology-grid">
-<div class="method-card">
-<div class="method-icon"><i class="fas fa-tv"></i></div>
-<h3>Supports Visuels Professionnels</h3>
-<p>Diapositives inspirées des cours d'ingénieurs, animations 3D des phénomènes ondulatoires.</p>
-<img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Salle de cours universitaire avec enseignant devant tableau technique">
-</div>
-<div class="method-card">
-<div class="method-icon"><i class="fas fa-microchip"></i></div>
-<h3>Démos en Temps Réel</h3>
-<p>Analyse spectrale live avec des dongles SDR (RTL-SDR)</p>
-<img src="https://m.media-amazon.com/images/I/71-Trg2OpBL._AC_UF1000  ,1000_QL80_.jpg" alt="Dongle SDR pour analyse spectrale" style="width:100%; border-radius:12px; margin-top:15px; box-shadow:0 4px 15px rgba(0,243,255,0.2);"></div>
-<div class="method-card">
-<div class="method-icon"><i class="fas fa-comments"></i></div>
-<h3>Discussions Interactives</h3>
-<p>Questions ouvertes : "Pourquoi les ondes ne traversent pas l'eau ?", "Comment fonctionne le GPS de votre téléphone ?"</p>
-<img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Échanges interactifs entre enseignant et étudiants en séminaire">
-</div>
-<div class="method-card">
-<div class="method-icon"><i class="fas fa-project-diagram"></i></div>
-<h3>Interdisciplinarité</h3>
-<p>Liaison avec les programmes de physique, mathématiques, histoire des sciences et technologie.</p>
-<img src="https://images.unsplash.com/photo-1632571401005-458e9d244591?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Tableau rempli d'équations mathématiques et schémas d'ondes">
-</div>
-</div>
-</div>
+<!-- ░░ Programme — bento ░░ -->
+<section id="programme" class="programme">
+  <header class="section-head">
+    <span class="kicker">02 — Programme</span>
+    <h2>Neuf modules, une <em>ligne droite</em> de Maxwell à la 5G.</h2>
+    <p>Chaque module peut être pris isolément ou combiné en parcours complet, selon le format choisi.</p>
+  </header>
+
+  <div class="bento">
+    <article class="bento__card bento__card--wide" data-i="01">
+      <div class="bento__num">01</div>
+      <h3>Introduction & Histoire</h3>
+      <p>De Maxwell à Tesla, de Hertz à Marconi. Comment l'humanité a appris à parler à la lumière invisible.</p>
+      <svg class="bento__art" viewBox="0 0 200 60" aria-hidden="true"><path d="M0 30 Q 20 5 40 30 T 80 30 T 120 30 T 160 30 T 200 30" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+    </article>
+
+    <article class="bento__card" data-i="02">
+      <div class="bento__num">02</div>
+      <h3>Bases physiques</h3>
+      <p>Propagation, réflexion, diffraction, absorption. Fréquence, longueur d'onde, énergie.</p>
+    </article>
+
+    <article class="bento__card" data-i="03">
+      <div class="bento__num">03</div>
+      <h3>Applications concrètes</h3>
+      <p>Pompiers, télécoms, IoT, espace, industrie. Pourquoi votre téléphone fonctionne (vraiment).</p>
+    </article>
+
+    <article class="bento__card bento__card--tall" data-i="04">
+      <div class="bento__num">04</div>
+      <h3>Chaîne radio complète</h3>
+      <p>Oscillateur, modulateur, amplificateur, filtre, antenne. Le bruit, les interférences, l'adaptation d'impédance démystifiés.</p>
+      <ul class="bento__list">
+        <li>Émission</li><li>Propagation</li><li>Réception</li><li>Décodage</li>
+      </ul>
+    </article>
+
+    <article class="bento__card" data-i="05">
+      <div class="bento__num">05</div>
+      <h3>Analyse des signaux</h3>
+      <p>Fourier vulgarisé, spectres en temps réel via SDR, théorème de Nyquist.</p>
+    </article>
+
+    <article class="bento__card" data-i="06">
+      <div class="bento__num">06</div>
+      <h3>Modulation & codage</h3>
+      <p>AM, FM, ASK, PSK, QAM, FSK. Lecture de constellations IQ.</p>
+    </article>
+
+    <article class="bento__card" data-i="07">
+      <div class="bento__num">07</div>
+      <h3>Bruit & filtres</h3>
+      <p>Comprendre le SNR, voir un signal "remonter" du bruit.</p>
+    </article>
+
+    <article class="bento__card bento__card--wide bento__card--accent" data-i="08">
+      <div class="bento__num">08</div>
+      <h3>Antennes</h3>
+      <p>Dipôles, Yagi, paraboliques. Démonstrations sur le terrain selon le matériel disponible dans l'établissement.</p>
+    </article>
+
+    <article class="bento__card" data-i="09">
+      <div class="bento__num">09</div>
+      <h3>Perspectives &amp; IA</h3>
+      <p>5G, ondes millimétriques, intelligence artificielle dans les télécoms, impact environnemental.</p>
+    </article>
+  </div>
 </section>
 
-<!-- Format intervention -->
-<section id="format" class="perspectives-bg">
-<div class="container">
-<h2 class="section-title"><span>Format</span> de l'Intervention</h2>
-<p class="section-subtitle">Adaptable à vos besoins pédagogiques</p>
-<div class="format-container">
-<div class="format-card">
-<div class="format-icon"><i class="fas fa-clock"></i></div>
-<h3>Durée Modulable</h3>
-<p>Choisissez le format qui convient à votre emploi du temps :</p>
-<div class="duration-tags">
-<span class="duration-tag">1h30 • Découverte</span>
-<span class="duration-tag">1 journée • Initiation complète</span>
-<span class="duration-tag">2-3 jours • Projet approfondi</span>
-</div>
-</div>
-<div class="format-card">
-<div class="format-icon"><i class="fas fa-box-open"></i></div>
-<h3>Matériel Fourni</h3>
-<p>Je fournis tous les supports nécessaires :</p>
-<ul style="text-align: left; margin-top: 15px; padding-left: 20px;">
-<li style="margin-bottom: 10px;">Diapositives interactives</li>
-<li style="margin-bottom: 10px;">Captures d'écran de signaux réels</li>
-<li style="margin-bottom: 10px;">Exercices pratiques imprimables</li>
-</ul>
-</div>
-<div class="format-card">
-<div class="format-icon"><i class="fas fa-hands-helping"></i></div>
-<h3>Atelier Pratique</h3>
-<p>Option manipulation directe pour les élèves :</p>
-<ul style="text-align: left; margin-top: 15px; padding-left: 20px;">
-<li style="margin-bottom: 10px;">Utilisation de récepteurs SDR grand public</li>
-<li style="margin-bottom: 10px;">Capture et analyse de signaux réels</li>
-<li>Création d'un petit projet de transmission</li>
-</ul>
-</div>
-</div>
-</div>
+<!-- ░░ Pour qui ? ░░ -->
+<section id="public" class="audience">
+  <header class="section-head">
+    <span class="kicker">03 — Pour qui ?</span>
+    <h2>Un même programme, <em>trois lectures</em> différentes.</h2>
+    <p>Le contenu, le vocabulaire et les manipulations sont calibrés pour chaque niveau, sans jamais sacrifier la rigueur scientifique.</p>
+  </header>
+
+  <div class="audience__grid">
+    <article class="audience__card">
+      <div class="audience__level">Collège / 4ᵉ−3ᵉ</div>
+      <h3>Découverte sensorielle</h3>
+      <p>Faire entendre une station FM avec une simple antenne en fil. Comprendre pourquoi le micro-ondes chauffe l'eau. Construire un détecteur d'ondes.</p>
+      <ul class="audience__points">
+        <li>Vocabulaire imagé, peu de mathématiques</li>
+        <li>Matériel sécurisé manipulable par les élèves</li>
+        <li>Répond à « à quoi ça sert ? »</li>
+      </ul>
+      <div class="audience__match">
+        <span class="audience__match-label">Format conseillé</span>
+        <span class="audience__match-value">Découverte 1h30</span>
+      </div>
+    </article>
+
+    <article class="audience__card audience__card--featured">
+      <div class="audience__level">Lycée / prépa</div>
+      <h3>Approfondissement scientifique</h3>
+      <p>Relié au programme de physique. Ondes, Fourier, modulation. Démos SDR avec lecture de spectres réels (avions, satellites météo, stations amateurs).</p>
+      <ul class="audience__points">
+        <li>Articulation directe avec les chapitres officiels</li>
+        <li>Travaux dirigés sur signaux capturés</li>
+        <li>Ouverture vers les métiers de l'ingénieur</li>
+      </ul>
+      <div class="audience__match">
+        <span class="audience__match-label">Format conseillé</span>
+        <span class="audience__match-value">1 journée complète</span>
+      </div>
+    </article>
+
+    <article class="audience__card">
+      <div class="audience__level">École d'ingénieurs</div>
+      <h3>Expertise &amp; projet</h3>
+      <p>Chaîne RF complète, modulation IQ, traitement du signal, sécurité RF. Mini-projets : transmission d'image, brouillage et détection, IMSI-catcher.</p>
+      <ul class="audience__points">
+        <li>Matériel pro : HackRF, RTL-SDR, GNU Radio</li>
+        <li>Lien avec cybersécurité et embarqué</li>
+        <li>Déjà délivré à l'ESIEA (cycle ingénieur)</li>
+      </ul>
+      <div class="audience__match">
+        <span class="audience__match-label">Format conseillé</span>
+        <span class="audience__match-value">Projet 2–3 jours</span>
+      </div>
+    </article>
+  </div>
 </section>
 
-<!-- Contact -->
-<section id="contact">
-<div class="container">
-<h2 class="section-title">Me <span>Contacter</span></h2>
-<p class="section-subtitle">Prêt à amener la radio dans votre établissement ?</p>
-<div class="contact-grid">
-<div class="contact-info">
-<h3>Coordonnées Professionnelles</h3>
-<div class="contact-item">
-<div class="contact-icon"><i class="fas fa-envelope"></i></div>
-<div>
-<h4>Email</h4>
-<p>leochouarbi@gmail.com</p>
-</div>
-</div>
-<div class="contact-item">
-<div class="contact-icon"><i class="fas fa-phone"></i></div>
-<div>
-<h4>Téléphone</h4>
-<p>+33 7 83 68 62 81</p>
-</div>
-</div>
-<div class="contact-item">
-<div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
-<div>
-<h4>Localisation</h4>
-<p>Paris, France</p>
-</div>
-</div>
-</div>
-<div class="contact-form">
-<form id="contactForm">
-<input type="text" name="user_name" placeholder="Nom complet de l'enseignant *" required>
-<input type="email" name="user_email" placeholder="Email professionnel *" required>
-<input type="text" name="user_etablissement" placeholder="Nom de l'établissement *">
-<textarea name="message" placeholder="Votre projet pédagogique ou questions..." required></textarea>
-<div id="formStatus"></div>
-<button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> Envoyer ma demande</button>
-</form>
-</div>
-</div>
-</div>
+<!-- ░░ Méthode ░░ -->
+<section id="methode" class="method">
+  <header class="section-head">
+    <span class="kicker">04 — Méthode</span>
+    <h2>Pédagogie du <em>geste</em> avant tout.</h2>
+    <p>On manipule, on capte de vrais signaux, on regarde le spectre vivre. La théorie vient ensuite, et elle prend du sens.</p>
+  </header>
+
+  <div class="method__grid">
+    <article class="method__card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 22h8M12 18v4"/></svg>
+      <h3>Supports visuels d'ingénieur</h3>
+      <p>Diapositives inspirées des cours d'écoles d'ingénieurs, animations 3D des phénomènes ondulatoires.</p>
+    </article>
+    <article class="method__card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10v4M11 10v4M15 10v4M19 10v4"/></svg>
+      <h3>Démos en temps réel</h3>
+      <p>Analyse spectrale live avec dongles RTL-SDR (~25 €) accessibles à tout établissement.</p>
+    </article>
+    <article class="method__card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      <h3>Discussions interactives</h3>
+      <p>« Pourquoi la FM ne traverse pas un tunnel ? », « Comment un GPS sait où vous êtes ? ». Des questions ouvertes, des réponses construites ensemble.</p>
+    </article>
+    <article class="method__card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <h3>Interdisciplinarité</h3>
+      <p>Liens explicites avec physique, mathématiques, histoire des sciences, technologie et géopolitique des télécoms.</p>
+    </article>
+  </div>
 </section>
 
-<!-- Footer -->
-<footer>
-<p>RadioÉcole – Ateliers de radiofréquence pour les établissements scolaires</p>
-<p class="copyright">© 2025 Tous droits réservés</p>
+<!-- ░░ IA × Radio ░░ -->
+<section id="ia" class="ai">
+  <div class="ai__bg" aria-hidden="true"></div>
+  <div class="ai__inner">
+    <div class="ai__content">
+      <span class="kicker">05 — Différenciateur 2026</span>
+      <h2>Quand l'<em>IA</em> rencontre les <em>ondes</em>.</h2>
+      <p class="ai__lede">
+        Un module exclusif sur l'usage concret de l'intelligence artificielle dans les systèmes radio modernes. Un angle pédagogique encore rare en France, qui prend tout son sens en 2026.
+      </p>
+
+      <div class="ai__features">
+        <div class="ai__feature">
+          <span class="ai__feature-num">01</span>
+          <h4>Reconnaissance automatique de signaux</h4>
+          <p>Démontrer en direct comment un réseau de neurones identifie une modulation (AM / FM / QPSK…) en quelques millisecondes, là où un ingénieur mettrait plusieurs minutes.</p>
+        </div>
+        <div class="ai__feature">
+          <span class="ai__feature-num">02</span>
+          <h4>Débruitage neuronal</h4>
+          <p>Faire écouter un signal vocal noyé dans le bruit, puis le même après passage par un modèle. Effet « wow » garanti, et discussion sur les biais qui s'ouvre naturellement.</p>
+        </div>
+        <div class="ai__feature">
+          <span class="ai__feature-num">03</span>
+          <h4>Optimisation du spectre &amp; cybersécurité</h4>
+          <p>Comment les opérateurs 5G/6G utilisent l'IA pour allouer dynamiquement la bande passante, et comment des attaquants l'utilisent pour brouiller intelligemment. Lien direct avec le labo sécurité de l'ESIEA.</p>
+        </div>
+      </div>
+
+      <div class="ai__tags">
+        <span>SDR</span><span>PyTorch</span><span>GNU Radio</span><span>Cognitive Radio</span><span>5G NR</span><span>Spectrum Sensing</span>
+      </div>
+
+      <!-- Avant/Après débruitage -->
+      <div class="ba">
+        <div class="ba__head">
+          <span class="ba__kicker">Démo · Débruitage neuronal</span>
+          <span class="ba__hint">Glissez le curseur</span>
+        </div>
+        <div class="ba__viewer" id="baViewer">
+          <!-- Après (en dessous, pleine largeur) -->
+          <div class="ba__layer ba__layer--after" aria-label="Signal après débruitage IA">
+            <svg viewBox="0 0 800 200" preserveAspectRatio="none" aria-hidden="true">
+              <path id="baAfter" d="" stroke="url(#baGradAfter)" stroke-width="1.6" fill="none"/>
+              <defs>
+                <linearGradient id="baGradAfter" x1="0" x2="1">
+                  <stop offset="0" stop-color="#00F0FF"/>
+                  <stop offset="1" stop-color="#5B8CFF"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <span class="ba__tag ba__tag--after">Après IA</span>
+          </div>
+          <!-- Avant (par dessus, clippé) -->
+          <div class="ba__layer ba__layer--before" id="baBefore" aria-label="Signal brut bruité">
+            <svg viewBox="0 0 800 200" preserveAspectRatio="none" aria-hidden="true">
+              <path id="baBeforePath" d="" stroke="#ff6ba6" stroke-width="1" fill="none" opacity=".7"/>
+            </svg>
+            <span class="ba__tag ba__tag--before">Avant</span>
+          </div>
+          <!-- Slider handle -->
+          <input class="ba__range" id="baRange" type="range" min="0" max="100" value="50" aria-label="Curseur avant/après" />
+          <div class="ba__handle" id="baHandle" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l-6-6 6-6M15 6l6 6-6 6"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="ai__visual" aria-hidden="true">
+      <svg viewBox="0 0 320 320" class="ai__network">
+        <!-- Couches de neurones (simplifié) -->
+        <g stroke="url(#aiGrad)" stroke-width=".6" fill="none" opacity=".5">
+          <line x1="40" y1="60"  x2="160" y2="40"/>
+          <line x1="40" y1="60"  x2="160" y2="110"/>
+          <line x1="40" y1="60"  x2="160" y2="180"/>
+          <line x1="40" y1="60"  x2="160" y2="250"/>
+          <line x1="40" y1="160" x2="160" y2="40"/>
+          <line x1="40" y1="160" x2="160" y2="110"/>
+          <line x1="40" y1="160" x2="160" y2="180"/>
+          <line x1="40" y1="160" x2="160" y2="250"/>
+          <line x1="40" y1="260" x2="160" y2="40"/>
+          <line x1="40" y1="260" x2="160" y2="110"/>
+          <line x1="40" y1="260" x2="160" y2="180"/>
+          <line x1="40" y1="260" x2="160" y2="250"/>
+          <line x1="160" y1="40"  x2="280" y2="110"/>
+          <line x1="160" y1="110" x2="280" y2="110"/>
+          <line x1="160" y1="180" x2="280" y2="110"/>
+          <line x1="160" y1="250" x2="280" y2="110"/>
+          <line x1="160" y1="40"  x2="280" y2="210"/>
+          <line x1="160" y1="110" x2="280" y2="210"/>
+          <line x1="160" y1="180" x2="280" y2="210"/>
+          <line x1="160" y1="250" x2="280" y2="210"/>
+        </g>
+        <!-- Onde à gauche (entrée) -->
+        <path d="M5 160 Q 15 130 25 160 T 45 160" stroke="#00F0FF" stroke-width="1.5" fill="none"/>
+        <!-- Sortie (signal nettoyé) -->
+        <path d="M285 160 Q 295 140 305 160 T 320 160" stroke="#00F0FF" stroke-width="2" fill="none"/>
+        <!-- Neurones -->
+        <g fill="#0B0E16" stroke="#00F0FF" stroke-width="1.2">
+          <circle cx="40"  cy="60"  r="7"/>
+          <circle cx="40"  cy="160" r="7"/>
+          <circle cx="40"  cy="260" r="7"/>
+          <circle cx="160" cy="40"  r="7"/>
+          <circle cx="160" cy="110" r="7"/>
+          <circle cx="160" cy="180" r="7"/>
+          <circle cx="160" cy="250" r="7"/>
+          <circle cx="280" cy="110" r="7"/>
+          <circle cx="280" cy="210" r="7"/>
+        </g>
+        <defs>
+          <linearGradient id="aiGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#00F0FF"/>
+            <stop offset="100%" stop-color="#FF2E88"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="ai__badge">Nouveau · 2026</div>
+    </aside>
+  </div>
+</section>
+
+<!-- ░░ Format ░░ -->
+<section id="format" class="format">
+  <header class="section-head">
+    <span class="kicker">06 — Format</span>
+    <h2>Choisissez la <em>fréquence</em> qui vous convient.</h2>
+  </header>
+
+  <div class="format__grid">
+    <article class="format__card">
+      <span class="format__tag">Découverte</span>
+      <h3>1h30</h3>
+      <p>Une intervention vivante pour planter le décor. Qu'est-ce qu'une onde, où sont-elles, démo SDR de clôture.</p>
+      <ul>
+        <li>Idéal pour journées portes ouvertes</li>
+        <li>Une classe entière (~30 élèves)</li>
+        <li>Aucun matériel requis côté établissement</li>
+      </ul>
+    </article>
+
+    <article class="format__card format__card--featured">
+      <span class="format__tag">Le plus demandé</span>
+      <h3>1 journée</h3>
+      <p>Initiation complète. Modules 1 à 5, atelier pratique de capture FM en groupe, restitution finale.</p>
+      <ul>
+        <li>Théorie et manipulation</li>
+        <li>Supports remis aux élèves</li>
+        <li>Synthèse pour l'équipe pédagogique</li>
+      </ul>
+    </article>
+
+    <article class="format__card">
+      <span class="format__tag">Projet</span>
+      <h3>2–3 jours</h3>
+      <p>Parcours approfondi. Tous les modules, mini-projet par groupe, transmission d'un message d'un bout à l'autre du bâtiment.</p>
+      <ul>
+        <li>Format semaine thématique</li>
+        <li>Évaluation et restitution</li>
+        <li>Idéal classes prépa et cycle ingénieur</li>
+      </ul>
+    </article>
+  </div>
+</section>
+
+<!-- ░░ Bandeau « Ils nous ont fait confiance » défilant ░░ -->
+<section class="trust" aria-label="Établissements ayant fait appel à RadioÉcole">
+  <div class="trust__label">Ils nous ont fait confiance</div>
+  <div class="trust__marquee" aria-hidden="true">
+    <div class="trust__track">
+      <span class="trust__item trust__item--real">★ ESIEA — École Supérieure d'Informatique Électronique Automatique</span>
+      <span class="trust__sep">/</span>
+      <span class="trust__item">Et demain votre établissement</span>
+      <span class="trust__sep">/</span>
+      <span class="trust__item">Collèges</span>
+      <span class="trust__sep">·</span>
+      <span class="trust__item">Lycées généraux &amp; technologiques</span>
+      <span class="trust__sep">·</span>
+      <span class="trust__item">Classes préparatoires</span>
+      <span class="trust__sep">·</span>
+      <span class="trust__item">BTS &amp; IUT</span>
+      <span class="trust__sep">·</span>
+      <span class="trust__item">Écoles d'ingénieurs</span>
+      <span class="trust__sep">·</span>
+      <span class="trust__item">Universités</span>
+      <span class="trust__sep">/</span>
+      <!-- duplicat pour boucle -->
+      <span class="trust__item trust__item--real">★ ESIEA — École Supérieure d'Informatique Électronique Automatique</span>
+      <span class="trust__sep">/</span>
+      <span class="trust__item">Et demain votre établissement</span>
+      <span class="trust__sep">/</span>
+      <span class="trust__item">Collèges</span>
+      <span class="trust__sep">·</span>
+      <span class="trust__item">Lycées généraux &amp; technologiques</span>
+      <span class="trust__sep">·</span>
+      <span class="trust__item">Classes préparatoires</span>
+      <span class="trust__sep">·</span>
+      <span class="trust__item">BTS &amp; IUT</span>
+      <span class="trust__sep">·</span>
+      <span class="trust__item">Écoles d'ingénieurs</span>
+      <span class="trust__sep">·</span>
+      <span class="trust__item">Universités</span>
+      <span class="trust__sep">/</span>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ Témoignage + Preuve sociale ░░ -->
+<section id="temoignage" class="testimonial">
+  <header class="section-head">
+    <span class="kicker">07 — Sur le terrain</span>
+    <h2>Déjà <em>éprouvé</em> en école d'ingénieurs.</h2>
+  </header>
+
+  <div class="testimonial__grid">
+    <figure class="testimonial__quote">
+      <svg class="testimonial__mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M10 8c-3 0-6 3-6 7v9h9v-9H7c0-3 1-5 3-5V8zm14 0c-3 0-6 3-6 7v9h9v-9h-6c0-3 1-5 3-5V8z" fill="currentColor"/>
+      </svg>
+      <blockquote>
+        <p>Merci Léo d'avoir accepté de réaliser ce cours <em>indispensable</em> pour de futurs ingénieurs spécialisés en systèmes embarqués et en cybersécurité.</p>
+        <p>Tu as remarquablement relevé le défi avec une <em>pédagogie participative unanimement appréciée</em>. Cette formation profitera aussi aux nombreux projets du laboratoire « Confiance Numérique et Sécurité » de l'ESIEA : guerre électronique, sécurité 5G-IoT, localisation d'IMSI catcher, Hack-RF, etc.</p>
+      </blockquote>
+      <figcaption>
+        <div class="testimonial__author">
+          <div class="testimonial__avatar" aria-hidden="true">RR</div>
+          <div>
+            <div class="testimonial__name">Richard Rey</div>
+            <div class="testimonial__role">Enseignant et ingénieur de recherche en cybersécurité<br/>ESIEA, École d'ingénieur·e·s d'un numérique utile</div>
+          </div>
+        </div>
+      </figcaption>
+    </figure>
+
+    <aside class="testimonial__stats">
+      <div class="stat-card">
+        <div class="stat-card__value" data-count="2635">0</div>
+        <div class="stat-card__label">Impressions LinkedIn</div>
+        <div class="stat-card__sub">sur l'annonce du premier cours</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__value" data-count="52">0</div>
+        <div class="stat-card__label">Réactions positives</div>
+        <div class="stat-card__sub">étudiants, enseignants, ingénieurs RF</div>
+      </div>
+      <div class="stat-card stat-card--highlight">
+        <div class="stat-card__value">100%</div>
+        <div class="stat-card__label">Avis favorables</div>
+        <div class="stat-card__sub">de l'équipe pédagogique ESIEA</div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ░░ FAQ ░░ -->
+<section id="faq" class="faq">
+  <header class="section-head">
+    <span class="kicker">— FAQ</span>
+    <h2>Les questions des <em>directrices et directeurs</em>.</h2>
+    <p>Les réponses concrètes à ce qu'on me demande systématiquement avant de planifier une intervention.</p>
+  </header>
+
+  <div class="faq__list">
+    <details class="faq__item">
+      <summary>
+        <span class="faq__q">Quelle durée et quel format proposez-vous ?</span>
+        <span class="faq__plus" aria-hidden="true"></span>
+      </summary>
+      <div class="faq__a">
+        <p>Trois formats éprouvés, modulables selon votre calendrier.</p>
+        <ul>
+          <li><strong>Découverte · 1h30.</strong> Une intervention pour planter le décor, idéale en JPO ou semaine des sciences. Pour ce format court, j'interviens en visio uniquement (pas de déplacement pour moins d'une journée), avec une préférence pour les cours du soir.</li>
+          <li><strong>Initiation · 1 journée.</strong> Le format le plus demandé, mêlant théorie, démos SDR et atelier pratique. Possible en visio ou en présentiel selon votre préférence.</li>
+          <li><strong>Projet · 2 à 3 jours.</strong> Parcours complet avec mini-projets par groupes (transmission, débruitage, mini-radar).</li>
+        </ul>
+        <p>Sur mesure si besoin : une demi-journée par semaine sur un trimestre, séminaire fermé, format hybride.</p>
+      </div>
+    </details>
+
+    <details class="faq__item">
+      <summary>
+        <span class="faq__q">Combien d'étudiants par session ?</span>
+        <span class="faq__plus" aria-hidden="true"></span>
+      </summary>
+      <div class="faq__a">
+        <p>Pour la <strong>partie théorique et démos</strong>, je travaille volontiers avec une classe entière, jusqu'à 50 personnes. Format déjà éprouvé en cycle ingénieur à l'ESIEA.</p>
+        <p>Pour les <strong>ateliers de manipulation SDR</strong>, l'idéal est de rester sous 30 personnes pour que chaque groupe dispose d'un vrai temps de manipulation. Au-delà, je recommande de scinder la classe, par exemple une journée par demi-classe.</p>
+      </div>
+    </details>
+
+    <details class="faq__item">
+      <summary>
+        <span class="faq__q">Quel matériel j'apporte, qu'est-ce que vous fournissez&nbsp;?</span>
+        <span class="faq__plus" aria-hidden="true"></span>
+      </summary>
+      <div class="faq__a">
+        <p><strong>Ce que j'apporte.</strong> Les démos avec SDR, mon ordinateur portable avec GNU Radio et toute la chaîne logicielle prête à l'emploi.</p>
+        <p><strong>Ce que l'établissement fournit.</strong> Une salle avec vidéoprojecteur (HDMI), une prise courant, idéalement le Wi-Fi pour les démos en ligne. Pour les formats projet en école d'ingénieur, les étudiants apportent leur poste de travail (Windows ou Linux au choix). Si l'école souhaite faire manipuler du matériel SDR par les étudiants, elle doit acquérir ses propres dongles à destination des élèves.</p>
+        <p>Aucun équipement spécifique n'est requis pour démarrer. Tout est dimensionné pour fonctionner partout, du collège au labo de recherche.</p>
+      </div>
+    </details>
+
+    <details class="faq__item">
+      <summary>
+        <span class="faq__q">Quels prérequis pour les élèves&nbsp;?</span>
+        <span class="faq__plus" aria-hidden="true"></span>
+      </summary>
+      <div class="faq__a">
+        <p><strong>Format Découverte (collège, lycée).</strong> Aucun prérequis. Les notions sont introduites par l'expérience sensorielle, ce qu'on entend et ce qu'on voit sur l'écran.</p>
+        <p><strong>Format Initiation (lycée scientifique, prépa).</strong> Idéalement les bases de trigonométrie et la notion d'onde vue en physique. Sans ces bases le cours peut être adapté. J'ai juste besoin de connaître les acquis du groupe en amont pour calibrer le contenu et qu'il reste pertinent.</p>
+        <p><strong>Format Projet (cycle ingénieur).</strong> Bases en traitement du signal et programmation Python recommandées pour les modules IA et traitement.</p>
+      </div>
+    </details>
+
+    <details class="faq__item">
+      <summary>
+        <span class="faq__q">Quel coût indicatif et comment se passe le devis&nbsp;?</span>
+        <span class="faq__plus" aria-hidden="true"></span>
+      </summary>
+      <div class="faq__a">
+        <p>Tarif <strong>sur devis personnalisé</strong>, calculé selon le format choisi, la distance et le nombre d'interventions.</p>
+        <p>Le process à suivre. Vous décrivez votre besoin via le formulaire ci-dessous. Je vous propose un format adapté et un devis sous <strong>48 heures ouvrées</strong>. Devis valable 60 jours, conventionnement possible.</p>
+        <p>Je suis également disponible par téléphone pour en discuter de vive voix, ou en visio sur Teams ou Zoom.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ░░ Contact ░░ -->
+<section id="contact" class="contact">
+  <header class="section-head">
+    <span class="kicker">08 — Contact</span>
+    <h2>Amenons la radio dans <em>votre établissement</em>.</h2>
+    <p>Réponse sous 48h ouvrées avec un devis adapté à votre contexte.</p>
+  </header>
+
+  <div class="contact__grid">
+    <aside class="contact__info">
+      <div class="contact__row">
+        <span class="contact__label">Email</span>
+        <a href="mailto:leoradio.pro@gmail.com">leoradio.pro@gmail.com</a>
+      </div>
+      <div class="contact__row">
+        <span class="contact__label">Téléphone</span>
+        <a href="tel:+33783686281">+33 7 83 68 62 81</a>
+      </div>
+      <div class="contact__row">
+        <span class="contact__label">Localisation</span>
+        <span>Paris et Île-de-France, déplacements France</span>
+      </div>
+      <div class="contact__row">
+        <span class="contact__label">Profil</span>
+        <span>Étudiant ingénieur ESIEA, passionné de RF depuis 8 ans</span>
+      </div>
+
+      <blockquote class="contact__quote">
+        « L'invisible n'est pas mystérieux : il est juste mal expliqué. »
+      </blockquote>
+    </aside>
+
+    <form class="contact__form" id="contactForm" novalidate>
+      <label>
+        <span>Votre nom</span>
+        <input type="text" name="user_name" required autocomplete="name" />
+      </label>
+      <label>
+        <span>Email professionnel</span>
+        <input type="email" name="user_email" required autocomplete="email" />
+      </label>
+      <label>
+        <span>Établissement</span>
+        <input type="text" name="user_etablissement" required />
+      </label>
+      <label>
+        <span>Votre projet</span>
+        <textarea name="message" rows="4" required placeholder="Niveau des élèves, format souhaité, période, contraintes…"></textarea>
+      </label>
+      <div id="formStatus" class="form-status" role="status"></div>
+      <button type="submit" class="btn btn--primary btn--full" data-magnetic>
+        Envoyer ma demande
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </button>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__top">
+    <div class="site-footer__brand">
+      <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+        <circle cx="16" cy="16" r="3" fill="currentColor"/>
+        <circle cx="16" cy="16" r="8" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".7"/>
+      </svg>
+      <span>Radio<em>Récole</em></span>
+    </div>
+    <p class="site-footer__tagline">Faire entendre l'invisible aux étudiants.</p>
+  </div>
+
+  <a href="mailto:leoradio.pro@gmail.com" class="site-footer__mailto" data-magnetic>
+    leoradio.pro@gmail.com
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+      <path d="M7 17L17 7M9 7h8v8"/>
+    </svg>
+  </a>
+
+  <div class="site-footer__grid">
+    <div class="site-footer__col">
+      <span class="site-footer__label">Navigation</span>
+      <a href="#programme">Programme</a>
+      <a href="#public">Pour qui</a>
+      <a href="#ia">IA × Radio</a>
+      <a href="#format">Format</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="site-footer__col">
+      <span class="site-footer__label">À lire</span>
+      <a href="cas-esiea.html">Cas concret · ESIEA</a>
+      <a href="#faq">FAQ</a>
+      <a href="#temoignage">Témoignage</a>
+    </div>
+    <div class="site-footer__col">
+      <span class="site-footer__label">Direct</span>
+      <a href="tel:+33783686281">+33 7 83 68 62 81</a>
+      <span>Paris &amp; Île-de-France</span>
+      <span>Réponse &lt; 48h ouvrées</span>
+    </div>
+    <div class="site-footer__col">
+      <span class="site-footer__label">Astuce</span>
+      <span>Tapez <kbd>...</kbd> <kbd>---</kbd> <kbd>...</kbd> au clavier.</span>
+    </div>
+  </div>
+
+  <div class="site-footer__bottom">
+    <small>© <span id="year"></span> RadioRécole · Tous droits réservés</small>
+    <small><a href="#hero">Retour en haut ↑</a></small>
+  </div>
 </footer>
 
-<!-- Scripts -->
-<script>
-// === Configuration EmailJS ===
-(function() {
-  emailjs.init("cX2lb1pbwVUFYNmJ2");
-})();
-
-// === Enregistrement obligatoire des plugins GSAP ===
-gsap.registerPlugin(ScrollTrigger);
-
-// --- Preloader avec timeout de sécurité ---
-function initPreloader() {
-const preloader = document.getElementById('preloader');
-if (!preloader) return;
-
-const maxTimeout = setTimeout(() => {
-  hidePreloader();
-}, 5000);
-
-if (document.readyState === 'complete') {
-  hidePreloader();
-  clearTimeout(maxTimeout);
-} else {
-  window.addEventListener('load', () => {
-    hidePreloader();
-    clearTimeout(maxTimeout);
-  });
-  
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(hidePreloader, 1000);
-  });
-}
-}
-
-function hidePreloader() {
-const preloader = document.getElementById('preloader');
-if (!preloader) return;
-  
-gsap.to(preloader, {
-  opacity: 0,
-  duration: 0.6,
-  ease: "power2.in",
-  onComplete: () => {
-    preloader.style.display = 'none';
-    setTimeout(initAnimations, 300);
-  }
-});
-}
-
-// --- Custom Cursor ---
-function initCursor() {
-const cursor = document.getElementById('cursor');
-const cursorFollower = document.getElementById('cursor-follower');
-if (!cursor || !cursorFollower) return;
-
-document.addEventListener('mousemove', (e) => {
-  gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
-  gsap.to(cursorFollower, { x: e.clientX, y: e.clientY, duration: 0.3 });
-});
-
-const interactive = document.querySelectorAll('a, button, .card, .module-card, .method-card, .format-card, input, textarea, .demo-card');
-interactive.forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    gsap.to(cursor, { scale: 2, duration: 0.2 });
-    gsap.to(cursorFollower, { scale: 3, opacity: 0.1, duration: 0.2 });
-  });
-  
-  el.addEventListener('mouseleave', () => {
-    gsap.to(cursor, { scale: 1, duration: 0.2 });
-    gsap.to(cursorFollower, { scale: 1, opacity: 1, duration: 0.2 });
-  });
-});
-
-document.addEventListener('mousedown', () => {
-  gsap.to(cursor, { scale: 1.4, duration: 0.1 });
-  gsap.to(cursorFollower, { scale: 0.9, opacity: 0.4, duration: 0.1 });
-});
-
-document.addEventListener('mouseup', () => {
-  gsap.to(cursor, { scale: 1, duration: 0.1 });
-  gsap.to(cursorFollower, { scale: 1, opacity: 1, duration: 0.1 });
-});
-}
-
-// --- Hero animation (Three.js) avec gestion d'erreur ---
-function initHeroAnimation() {
-const canvasContainer = document.getElementById('heroCanvas');
-if (!canvasContainer || !window.THREE) {
-  console.warn('Three.js non disponible - mode dégradé activé');
-  return;
-}
-
-try {
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, canvasContainer.offsetWidth / canvasContainer.offsetHeight, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  
-  const resize = () => {
-    const w = canvasContainer.offsetWidth || window.innerWidth;
-    const h = canvasContainer.offsetHeight || window.innerHeight;
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-    renderer.setSize(w, h);
-  };
-  
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  resize();
-  
-  const particlesGeometry = new THREE.BufferGeometry();
-  const particleCount = 2000;
-  const posArray = new Float32Array(particleCount * 3);
-  const colorArray = new Float32Array(particleCount * 3);
-  
-  for (let i = 0; i < particleCount * 3; i += 3) {
-    posArray[i] = (Math.random() - 0.5) * 20;
-    posArray[i + 1] = (Math.random() - 0.5) * 20;
-    posArray[i + 2] = (Math.random() - 0.5) * 20;
-    colorArray[i] = 0.0; // R
-    colorArray[i + 1] = 0.8; // G
-    colorArray[i + 2] = 1.0; // B
-  }
-  
-  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-  particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
-  
-  const particlesMaterial = new THREE.PointsMaterial({
-    size: 0.05,
-    vertexColors: true,
-    transparent: true,
-    opacity: 0.8
-  });
-  
-  const particleSystem = new THREE.Points(particlesGeometry, particlesMaterial);
-  scene.add(particleSystem);
-  
-  camera.position.z = 10;
-  
-  const animate = () => {
-    requestAnimationFrame(animate);
-    particleSystem.rotation.x += 0.0001;
-    particleSystem.rotation.y += 0.0005;
-    
-    const positions = particlesGeometry.attributes.position.array;
-    for (let i = 0; i < positions.length; i += 3) {
-      positions[i + 1] = Math.sin(positions[i] * 2 + Date.now() * 0.001) * 0.5;
-    }
-    particlesGeometry.attributes.position.needsUpdate = true;
-    
-    renderer.render(scene, camera);
-  };
-  
-  window.addEventListener('resize', resize);
-  canvasContainer.appendChild(renderer.domElement);
-  animate();
-  
-} catch (e) {
-  console.error('Three.js init error:', e);
-  canvasContainer.innerHTML = '<div class="fallback-wave"></div>';
-}
-}
-
-// --- GSAP animations ---
-function initAnimations() {
-gsap.fromTo('.hero h1', { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1.4, ease: "power3.out", delay: 0.2 });
-gsap.fromTo('.hero-subtitle', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 0.5 });
-gsap.fromTo('.hero p', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.2, ease: "power3.out", delay: 0.7, stagger: 0.1 });
-gsap.fromTo('.hero-btns', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 1.0 });
-gsap.utils.toArray('.section-title, .section-subtitle').forEach((el) => {
-  gsap.fromTo(el, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 90%" } });
-});
-gsap.utils.toArray('.module-card, .demo-card, .method-card, .format-card').forEach((card, i) => {
-  gsap.fromTo(card, { opacity: 0, y: 60, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 1, ease: "power3.out", scrollTrigger: { trigger: card, start: "top 85%" }, delay: i * 0.05 });
-});
-gsap.fromTo('.contact-grid', { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: '.contact-grid', start: "top 85%" } });
-gsap.fromTo('footer', { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: 'footer', start: "top 90%" } });
-}
-
-// --- Navigation smooth scroll ---
-function initSmoothNav() {
-window.addEventListener('scroll', () => {
-  const header = document.getElementById('header');
-  if (window.scrollY > 100) {
-    header.classList.add('scrolled');
-  } else {
-    header.classList.remove('scrolled');
-  }
-});
-
-document.querySelectorAll('nav a, .hero-btns a').forEach(link => {
-  link.addEventListener('click', (e) => {
-    e.preventDefault();
-    const targetId = link.getAttribute('href');
-    const targetElement = document.querySelector(targetId);
-    
-    if (targetElement) {
-      window.scrollTo({
-        top: targetElement.offsetTop - 80,
-        behavior: 'smooth'
-      });
-      
-      document.querySelectorAll('nav a').forEach(navLink => {
-        navLink.classList.remove('active');
-      });
-      link.classList.add('active');
-    }
-  });
-});
-}
-
-// --- Form submission avec EmailJS ---
-function initContactForm() {
-const contactForm = document.getElementById('contactForm');
-const statusDiv = document.getElementById('formStatus');
-  
-if (!contactForm || !statusDiv) {
-  console.error('Formulaire ou élément de statut non trouvé');
-  return;
-}
-  
-contactForm.addEventListener('submit', function(e) {
-  e.preventDefault();
-  const submitBtn = this.querySelector('.submit-btn');
-  const originalText = submitBtn.innerHTML;
-  
-  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
-  submitBtn.disabled = true;
-  statusDiv.innerHTML = '';
-  
-  const serviceID = "service_f5zle8u";
-  const templateID = "template_afpdm48";
-  
-  emailjs.sendForm(serviceID, templateID, this)
-    .then((response) => {
-      statusDiv.innerHTML = '<div class="form-status success">✅ Votre demande a bien été envoyée ! Je vous répondrai sous 48h pour établir un devis personnalisé.</div>';
-      this.reset();
-    })
-    .catch((error) => {
-      statusDiv.innerHTML = `<div class="form-status error">❌ ${error.text}</div>`;
-      console.error('Erreur formulaire:', error);
-    })
-    .finally(() => {
-      setTimeout(() => {
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-      }, 2000);
-    });
-});
-}
-
-// --- Initialisation principale avec gestion d'erreurs ---
-document.addEventListener('DOMContentLoaded', () => {
-try {
-  setTimeout(initPreloader, 100);
-  setTimeout(initCursor, 300);
-  setTimeout(initHeroAnimation, 500);
-  setTimeout(initSmoothNav, 200);
-  setTimeout(initContactForm, 200);
-  
-  window.onload = function() {
-    console.log('Page entièrement chargée');
-  };
-  
-} catch (error) {
-  console.error('Erreur d\'initialisation globale:', error);
-  const preloader = document.getElementById('preloader');
-  if (preloader) {
-    preloader.style.display = 'none';
-  }
-}
-});
-</script>
+<!-- Libs -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" defer></script>
+<script src="js/main.js" defer></script>
 </body>
-
 </html>

@@ -1,0 +1,8 @@
+node_modules/
+package-lock.json
+package.json
+*.pdf
+_pdf-text.txt
+.DS_Store
+Thumbs.db
+.vscode/
