@@ -320,13 +320,25 @@
 
   // ─── UI sounds (opt-in, Web Audio)
   let audioCtx = null;
+  let masterGain = null;
   let soundOn = localStorage.getItem('uiSound') === '1';
   const ensureAudio = () => {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = 0.6; // master volume bien audible
+      // Petit limiter pour éviter la saturation
+      const compressor = audioCtx.createDynamicsCompressor();
+      compressor.threshold.value = -10;
+      compressor.ratio.value = 8;
+      compressor.attack.value = 0.003;
+      compressor.release.value = 0.08;
+      masterGain.connect(compressor).connect(audioCtx.destination);
+    }
     if (audioCtx.state === 'suspended') audioCtx.resume();
     return audioCtx;
   };
-  const uiBeep = (freq = 440, vol = 0.12, dur = 0.09, type = 'sine') => {
+  const uiBeep = (freq = 440, vol = 0.35, dur = 0.09, type = 'sine') => {
     if (!soundOn) return;
     try {
       const ctx = ensureAudio();
@@ -338,13 +350,13 @@
       gain.gain.setValueAtTime(0, now);
       gain.gain.linearRampToValueAtTime(vol, now + 0.005);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-      osc.connect(gain).connect(ctx.destination);
+      osc.connect(gain).connect(masterGain);
       osc.start(now);
       osc.stop(now + dur);
     } catch {}
   };
   // Petit "blip" double-fréquence pour effet plus radio/SDR
-  const uiChirp = (f1, f2, dur = 0.12, vol = 0.1) => {
+  const uiChirp = (f1, f2, dur = 0.12, vol = 0.32) => {
     if (!soundOn) return;
     try {
       const ctx = ensureAudio();
@@ -357,7 +369,7 @@
       gain.gain.setValueAtTime(0, now);
       gain.gain.linearRampToValueAtTime(vol, now + 0.008);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-      osc.connect(gain).connect(ctx.destination);
+      osc.connect(gain).connect(masterGain);
       osc.start(now);
       osc.stop(now + dur);
     } catch {}
@@ -372,30 +384,46 @@
       soundOn = !soundOn;
       localStorage.setItem('uiSound', soundOn ? '1' : '0');
       soundBtn.setAttribute('aria-pressed', String(soundOn));
-      if (soundOn) { ensureAudio(); uiChirp(440, 880, 0.18, 0.14); }
+      if (soundOn) { ensureAudio(); uiChirp(440, 880, 0.22, 0.4); }
     });
-    // Sons différenciés par type d'élément
+
+    // Survol des bandes du spectre — pitch selon la position (Radio grave → Gamma aigu)
+    const bands = [...document.querySelectorAll('.band')];
+    bands.forEach((b, i) => {
+      b.addEventListener('mouseenter', () => {
+        // Échelle exponentielle façon spectre EM : 220Hz → 1760Hz
+        const f = 220 * Math.pow(2, i * (3 / (bands.length - 1)));
+        uiBeep(f, 0.32, 0.16, 'sine');
+      });
+    });
+
+    // Clics : sons différenciés mais discrets (le hover prime)
     document.addEventListener('click', (e) => {
       if (!soundOn) return;
       const t = e.target;
-      if (t.closest('.btn--primary, .nav__cta')) uiChirp(520, 880, 0.14, 0.13);
+      if (t.closest('.btn--primary, .nav__cta')) uiChirp(520, 920, 0.16, 0.4);
       else if (t.closest('.band')) {
-        // Pitch selon la position de la bande dans le spectre
-        const bands = [...document.querySelectorAll('.band')];
+        // Au clic, double note pour confirmer la sélection
         const i = bands.indexOf(t.closest('.band'));
-        uiBeep(440 + i * 110, 0.1, 0.1, 'sine');
+        const f = 220 * Math.pow(2, i * (3 / (bands.length - 1)));
+        uiChirp(f, f * 1.5, 0.18, 0.3);
       }
-      else if (t.closest('button, summary')) uiBeep(660, 0.09, 0.07, 'sine');
-      else if (t.closest('a')) uiBeep(880, 0.07, 0.06, 'sine');
+      else if (t.closest('button, summary')) uiBeep(660, 0.3, 0.08, 'sine');
+      else if (t.closest('a')) uiBeep(880, 0.25, 0.06, 'sine');
     });
-    // Survol des éléments interactifs : très bref tick
-    document.addEventListener('pointerenter', (e) => {
+
+    // Survol cartes — tick discret bien audible
+    let lastHover = 0;
+    document.addEventListener('pointerover', (e) => {
       if (!soundOn || !finePointer) return;
+      const now = performance.now();
+      if (now - lastHover < 50) return; // throttle
       const t = e.target;
-      if (t.matches && t.matches('.bento__card, .audience__card, .method__card, .format__card')) {
-        uiBeep(1200, 0.04, 0.03, 'sine');
+      if (t.closest && t.closest('.bento__card, .audience__card, .method__card, .format__card, .stat-card, .ai__feature')) {
+        lastHover = now;
+        uiBeep(1100, 0.18, 0.04, 'sine');
       }
-    }, true);
+    });
   }
 
   // ─── Spectrum cursor tag
@@ -452,7 +480,7 @@
       if (window.__uiBeep && now - baLastSound > 35) {
         baLastSound = now;
         const v = +e.target.value;
-        window.__uiBeep(200 + v * 10, 0.05, 0.025, 'sine');
+        window.__uiBeep(200 + v * 12, 0.22, 0.04, 'sine');
       }
     });
     update(50);
@@ -460,7 +488,7 @@
 
   // ─── Sounds : focus champs, ouverture FAQ, etc.
   document.querySelectorAll('input, textarea, select').forEach(el => {
-    el.addEventListener('focus', () => window.__uiBeep && window.__uiBeep(700, 0.06, 0.06, 'sine'));
+    el.addEventListener('focus', () => window.__uiBeep && window.__uiBeep(700, 0.28, 0.07, 'sine'));
   });
   document.querySelectorAll('details.faq__item').forEach(d => {
     d.addEventListener('toggle', () => {
